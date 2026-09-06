@@ -31,20 +31,11 @@ build/
 # Railway
 .railway/
 
-# Misc
-*.tmp
-*.temp
-coverage/
-.nyc_output/
-
 # Vercel
 .vercel
 
 # Docker
 Dockerfile.dockerignore
-
-# Windows
-gitconfig
 
 # Test
 test/
