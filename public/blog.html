@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog - DREAMZ DC Dispensary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;color:#1a1a1a;background:#0a0a0f;line-height:1.6}
+        a{text-decoration:none;color:inherit}
+        img{max-width:100%;height:auto}
+        .header{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(10,10,15,0.97);backdrop-filter:blur(20px);padding:0}
+        .header .container{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
+        .logo{display:flex;align-items:center;gap:10px}
+        .logo img{height:36px;border-radius:6px}
+        .logo-text{font-size:1.3rem;font-weight:800;color:#d4a853}
+        .nav-desktop a{color:#bbb;font-weight:500;padding:8px 14px;font-size:0.85rem;border-radius:8px;transition:all 0.2s}
+        .nav-desktop a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+        main{padding-top:64px;min-height:80vh}
+        .page-container{max-width:1200px;margin:0 auto;padding:0 20px}
+        .page-header{text-align:center;margin-bottom:48px;padding:60px 0}
+        .page-header h1{font-size:2.5rem;color:#fff;margin-bottom:12px}
+        .page-header p{color:#888;font-size:1.05rem}
+        .blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;padding:20px 0}
+        .blog-card{background:#14141f;border:1px solid #2a2a3a;border-radius:16px;overflow:hidden;transition:all 0.3s}
+        .blog-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+        .blog-image{height:200px;background:#0a0a0f;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .blog-image img{width:100%;height:100%;object-fit:cover}
+        .blog-content{padding:24px}
+        .blog-tag{display:inline-block;background:rgba(233,69,96,0.15);color:#ff6b6b;padding:3px 10px;border-radius:4px;font-size:0.7rem;font-weight:600;text-transform:uppercase}
+        .blog-content h3{color:#fff;font-size:1.2rem;margin:12px 0 8px}
+        .blog-content p{color:#888;font-size:0.9rem}
+        .blog-date{color:#555;font-size:0.8rem;margin-top:8px}
+        .read-more{color:#d4a853;font-weight:600;font-size:0.9rem;margin-top:12px;display:inline-flex;align-items:center;gap:6px}
+        .blog-hero{padding:40px 0}
+        .blog-hero h2{color:#fff;font-size:1.5rem}
+        .blog-hero p{color:#888}
+        footer{background:#06060a;color:#666;padding:60px 0 30px;border-top:1px solid #2a2a3a}
+        .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+        .footer h3{color:#fff;margin-bottom:20px}
+        .footer ul li{margin-bottom:8px}
+        .footer ul li a{color:#888;font-size:0.88rem}
+        .footer ul li a:hover{color:#d4a853}
+        .footer-bottom{border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;text-align:center;font-size:0.78rem;color:#444}
+        @media(max-width:768px){.nav-desktop{display:none}.footer-grid{grid-template-columns:1fr 1fr}}
+    </style>
+</head>
+<body>
+<header class="header"><div class="container"><div class="logo"><img src="/images/logo.jpg" alt="DREAMZ DC"><span class="logo-text">DREAMZ DC</span></div><nav class="nav-desktop"><a href="/">Home</a><a href="/#shop">Shop</a><a href="/#categories">Categories</a><a href="/#blog">Blog</a><a href="/#faq">FAQ</a><a href="/#med-reg">Med Reg</a></nav></div></header>
+<main>
+<div class="page-container">
+    <div class="page-header">
+        <h1>DREAMZ DC Blog</h1>
+        <p>Stay informed with the latest news, tips, and product guides.</p>
+    </div>
+    <div class="blog-hero">
+        <h2>Latest Articles</h2>
+        <p>Cannabis education, DREAMZ DC updates, and more.</p>
+    </div>
+    <div class="blog-grid">
+        <article class="blog-card">
+            <div class="blog-image"><img src="/images/Code_Generated_Image (1).jpg" alt="How To Buy Weed In Washington, DC"></div>
+            <div class="blog-content">
+                <span class="blog-tag">Guide</span>
+                <h3>How To Buy Weed In Washington, DC</h3>
+                <p>Learn everything you need to know about purchasing cannabis in Washington DC, including self-certification, product types, and what to expect when shopping at DREAMZ DC.</p>
+                <div class="blog-date">September 5, 2026</div>
+                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </article>
+        <article class="blog-card">
+            <div class="blog-image"><img src="/images/Code_Generated_Image (12).jpg" alt="How Delivery Works in Washington, DC"></div>
+            <div class="blog-content">
+                <span class="blog-tag">Delivery</span>
+                <h3>How Delivery Works in Washington, DC</h3>
+                <p>DREAMZ DC offers fast, reliable delivery throughout the DC metro area. Here's how our delivery process works from order to doorstep.</p>
+                <div class="blog-date">September 4, 2026</div>
+                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </article>
+        <article class="blog-card">
+            <div class="blog-image"><img src="/images/Code_Generated_Image (13).jpg" alt="Understanding Cannabis Strains"></div>
+            <div class="blog-content">
+                <span class="blog-tag">Education</span>
+                <h3>Understanding Cannabis Strains: Indica vs Sativa vs Hybrid</h3>
+                <p>Confused about strain types? Learn the differences between indica, sativa, and hybrid cannabis and which might be right for you.</p>
+                <div class="blog-date">September 3, 2026</div>
+                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </article>
+        <article class="blog-card">
+            <div class="blog-image"><img src="/images/Code_Generated_Image (15).jpg" alt="DREAMZ DC Product Guide"></div>
+            <div class="blog-content">
+                <span class="blog-tag">Products</span>
+                <h3>DREAMZ DC Product Guide: What's New This Month</h3>
+                <p>Check out our latest arrivals including DREAMZ Compound flower, new Jeeter Juice disposables, and exclusive Ganjavores selections.</p>
+                <div class="blog-date">September 2, 2026</div>
+                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </article>
+        <article class="blog-card">
+            <div class="blog-image"><img src="/images/Code_Generated_Image (17).jpg" alt="Cannabis Safety"></div>
+            <div class="blog-content">
+                <span class="blog-tag">Safety</span>
+                <h3>Cannabis Safety: What to Look For</h3>
+                <p>All DREAMZ DC products are lab-tested. Here's what you should know about potency, terpene profiles, and cannabis safety standards.</p>
+                <div class="blog-date">September 1, 2026</div>
+                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </article>
+        <article class="blog-card">
+            <div class="blog-image"><img src="/images/storefront.jpg" alt="DC Cannabis Laws Explained"></div>
+            <div class="blog-content">
+                <span class="blog-tag">Legal</span>
+                <h3>DC Cannabis Laws Explained (2026 Update)</h3>
+                <p>What's legal and what's not in Washington DC. A comprehensive guide to DC's cannabis regulations for residents and visitors alike.</p>
+                <div class="blog-date">August 30, 2026</div>
+                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </article>
+    </div>
+</div>
+</main>
+<footer>
+<div class="container">
+    <div class="footer-grid">
+        <div><img src="/images/logo.jpg" style="height:32px;margin-bottom:12px;border-radius:6px"><h3>DREAMZ DC</h3><p style="color:#777;font-size:0.9rem">Washington DC's premier cannabis dispensary & delivery service.</p></div>
+        <div><h3>SITE</h3><ul><li><a href="/">Home</a></li><li><a href="/#shop">Shop</a></li><li><a href="/#categories">Categories</a></li></ul></div>
+        <div><h3>RESOURCES</h3><ul><li><a href="/#med-reg">Medical Registration</a></li><li><a href="/#faq">FAQ</a></li><li><a href="/#blog">Blog</a></li></ul></div>
+        <div><h3>CONTACT</h3><ul><li><a href="tel:2027098944">(202) 709-8944</a></li><li><a href="mailto:info@dreamzdccompound.shop">info@dreamzdccompound.shop</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 DREAMZ DC. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p></div>
+</div>
+</footer>
+</body>
+</html>
