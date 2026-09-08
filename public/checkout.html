@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout | DREAMZ DC</title>
+  <link rel="icon" href="/images/logo.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<main>
+  <section class="page-hero">
+    <div class="page-container">
+      <h1>Checkout</h1>
+      <p>Delivery across DC or curbside pickup on Pennsylvania Ave SE. Payment is confirmed with the shop after you submit.</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:8px">
+    <div class="page-container checkout-grid" id="checkoutMain">
+      <form class="form-card" id="checkoutForm" novalidate>
+        <h2 style="margin-bottom:16px">Your details</h2>
+        <div class="form-grid">
+          <div class="form-field"><label>First name <span class="req">*</span></label><input name="firstName" required autocomplete="given-name"></div>
+          <div class="form-field"><label>Last name <span class="req">*</span></label><input name="lastName" required autocomplete="family-name"></div>
+          <div class="form-field full"><label>Email <span class="req">*</span></label><input name="email" type="email" required autocomplete="email"></div>
+          <div class="form-field full"><label>Phone <span class="opt">(optional)</span></label><input name="phone" type="tel" autocomplete="tel" placeholder="(202) 555-0100"></div>
+        </div>
+
+        <h2 style="margin:22px 0 10px">Fulfillment</h2>
+        <div class="fulfill-options">
+          <label class="fulfill-opt active" data-mode="delivery">
+            <input type="radio" name="fulfillment" value="delivery" checked>
+            <strong>Delivery</strong>
+            <div style="color:#888;font-size:.8rem">DC address required. Typical window ~2 hours.</div>
+          </label>
+          <label class="fulfill-opt" data-mode="curbside">
+            <input type="radio" name="fulfillment" value="curbside">
+            <strong>Curbside pickup</strong>
+            <div style="color:#888;font-size:.8rem">611 Pennsylvania Ave SE, 2nd Floor.</div>
+          </label>
+        </div>
+
+        <div id="deliveryFields">
+          <h3 style="margin-bottom:10px">Delivery address</h3>
+          <div class="form-grid">
+            <div class="form-field full"><label>Street address <span class="req">*</span></label><input id="shipAddress" name="shipAddress" autocomplete="address-line1"></div>
+            <div class="form-field full"><label>Apt / suite / buzzer <span class="opt">(optional)</span></label><input name="shipApt" autocomplete="address-line2"></div>
+            <div class="form-field"><label>City <span class="req">*</span></label><input id="shipCity" name="shipCity" value="Washington" autocomplete="address-level2"></div>
+            <div class="form-field"><label>State <span class="req">*</span></label><input id="shipState" name="shipState" value="DC" maxlength="2" autocomplete="address-level1"></div>
+            <div class="form-field full"><label>ZIP <span class="req">*</span></label><input id="shipZip" name="shipZip" autocomplete="postal-code"></div>
+          </div>
+        </div>
+
+        <div id="pickupFields" class="hidden">
+          <div class="notice">Pickup at 611 Pennsylvania Ave SE, 2nd Floor, Washington, DC 20003. Bring a valid 21+ ID.</div>
+          <div class="form-grid">
+            <div class="form-field"><label>Vehicle color <span class="opt">(optional)</span></label><input name="vehicleColor"></div>
+            <div class="form-field"><label>Make / model <span class="opt">(optional)</span></label><input name="vehicleMake"></div>
+            <div class="form-field full"><label>License plate <span class="opt">(optional)</span></label><input name="vehiclePlate"></div>
+          </div>
+        </div>
+
+        <h2 style="margin:22px 0 10px">Optional</h2>
+        <div class="form-grid">
+          <div class="form-field"><label>Promo code</label><input name="promo" placeholder="DREAMZ10"></div>
+          <div class="form-field"><label>Preferred time window</label><input name="preferredTime" placeholder="Tonight after 7pm"></div>
+          <div class="form-field full"><label>Order notes</label><textarea name="notes" rows="3" placeholder="Gate code, call on arrival, substitutions…"></textarea></div>
+        </div>
+
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:16px 0;font-size:.88rem">
+          <input type="checkbox" name="ageConfirm" required>
+          <span>I confirm I am 21+ and will present valid ID on delivery or pickup. <span class="req">*</span></span>
+        </label>
+        <p id="formError" class="error"></p>
+        <button class="checkout-btn" id="placeOrder" type="submit">Submit order</button>
+      </form>
+
+      <aside class="summary-card">
+        <h2 style="margin-bottom:12px">Order summary</h2>
+        <div id="summaryItems"></div>
+        <div class="cart-item"><span>Subtotal</span><span id="sumSub">$0.00</span></div>
+        <div class="cart-item hidden" id="sumDiscRow"><span>Promo</span><span id="sumDisc">$0.00</span></div>
+        <div class="cart-item"><span id="sumFeeLabel">Delivery</span><span id="sumFee">$0.00</span></div>
+        <div class="cart-total"><span>Total</span><span id="sumTotal">$0.00</span></div>
+        <p style="color:#777;font-size:.78rem">No card is charged on this form. The shop confirms payment when the order is accepted.</p>
+      </aside>
+    </div>
+  </section>
+</main>
+<script src="/js/products.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/site.js"></script>
+<script src="/js/checkout.js"></script>
+</body>
+</html>

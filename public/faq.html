@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ | DREAMZ DC</title>
+  <link rel="icon" href="/images/logo.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<main>
+  <section class="page-hero">
+    <div class="page-container">
+      <h1>FAQ</h1>
+      <p>Hours, self-cert, delivery, and what to expect.</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:8px">
+    <div class="page-container faq-list">
+      <div class="faq-item open"><div class="faq-question">Where is DREAMZ DC? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>611 Pennsylvania Ave SE, 2nd Floor, Washington, DC 20003. We serve the DC metro area.</p></div></div>
+      <div class="faq-item"><div class="faq-question">What are the hours? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Sunday–Wednesday 10AM–12AM. Thursday–Saturday 10AM–3AM EST.</p></div></div>
+      <div class="faq-item"><div class="faq-question">Do I need a medical card? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Not if you are 21+. Register for a Visitor Pass at the <a href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" target="_blank" rel="noopener" style="color:var(--gold)">self-cert portal</a>.</p></div></div>
+      <div class="faq-item"><div class="faq-question">Do you deliver? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Yes. Choose delivery at checkout and enter a full DC address. Curbside pickup is the other option.</p></div></div>
+      <div class="faq-item"><div class="faq-question">Are products lab-tested? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Yes. Menu items include potency and, where available, terpene data.</p></div></div>
+    </div>
+  </section>
+</main>
+<script src="/js/products.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/site.js"></script>
+<script>
+  document.querySelectorAll('.faq-question').forEach(q => q.addEventListener('click', () => q.parentElement.classList.toggle('open')));
+</script>
+</body>
+</html>

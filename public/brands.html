@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brands | DREAMZ DC</title>
+  <link rel="icon" href="/images/logo.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<main>
+  <section class="page-hero">
+    <div class="page-container">
+      <h1>Featured brands</h1>
+      <p>House product plus the labels people actually ask for in DC.</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:8px">
+    <div class="page-container brand-grid" id="brandGrid"></div>
+  </section>
+</main>
+<script src="/js/products.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/site.js"></script>
+<script>
+  const brands = [
+    { slug: 'dreamz-compound', name: 'DREAMZ COMPOUND', blurb: 'Our signature line — flower, vapes, edibles, topicals.', img: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
+    { slug: 'cookies', name: 'Cookies', blurb: 'Premium genetics, flower, and Fat Boy hardware.', img: '/images/Gary Payton by Cookies -Premium Whole Flower.jpg' },
+    { slug: 'ganjavores', name: 'Ganjavores', blurb: 'DC-rooted flower and vapes.', img: '/images/Green Crack by Ganjavores - Premium Flower.jpg' },
+    { slug: 'jeeter-juice', name: 'Jeeter Juice', blurb: 'Live resin straw disposables.', img: '/images/Jeeter Juice - Wedding Cake (Hybrid) - Disposable Straw Vape - 1G - Live Resin.jpg' },
+    { slug: 'sunflower-by-eva', name: 'Sunflower by Eva', blurb: 'Local-favorite flower drops.', img: '/images/Code_Generated_Image (15).jpg' },
+    { slug: 'muha-meds', name: 'Muha Meds', blurb: 'Cartridges and high-dose edibles.', img: '/images/Code_Generated_Image (23).jpg' }
+  ];
+  document.getElementById('brandGrid').innerHTML = brands.map(b => `
+    <a class="brand-card" href="/shop.html?brand=${encodeURIComponent(b.slug)}">
+      <img src="${b.img}" alt="${b.name}">
+      <h3>${b.name}</h3>
+      <p style="color:#888">${b.blurb}</p>
+    </a>`).join('');
+</script>
+</body>
+</html>

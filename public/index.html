@@ -1,642 +1,79 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="DREAMZ DC Compound - Premium Cannabis Dispensary & Delivery in Washington DC. Shop flower, vapes, edibles, and more. Self-certify in seconds.">
-    <meta name="keywords" content="DREAMZ DC, cannabis, dispensary, delivery, Washington DC, flower, vapes, edibles">
-    <meta property="og:title" content="DREAMZ DC Dispensary | Washington DC Cannabis">
-    <meta property="og:description" content="Premium cannabis dispensary & delivery in Washington DC. Shop flower, vapes, edibles, and more.">
-    <meta property="og:image" content="/images/storefront.jpg">
-    <meta property="og:url" content="https://dreamzdccompound.shop">
-    <title>DREAMZ DC Dispensary | Premium Cannabis & Delivery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        html{scroll-behavior:smooth}
-        body{font-family:'Inter',sans-serif;color:#1a1a1a;background:#0a0a0f;line-height:1.6;overflow-x:hidden}
-        a{text-decoration:none;color:inherit}
-        img{max-width:100%;height:auto}
-        button{cursor:pointer;font-family:inherit}
-        ul{list-style:none}
-        :root{--primary:#1a1a2e;--primary-light:#16213e;--accent:#e94560;--accent-glow:#ff6b6b;--gold:#d4a853;--gold-light:#f0d68a;--dark:#0f0f1a;--text:#2d2d2d;--text-light:#999;--bg:#0a0a0f;--bg-card:#14141f;--border:#2a2a3a;--success:#10b981}
-        
-        /* ANNOUNCEMENT BAR */
-        .announcement-bar{background:linear-gradient(90deg,var(--accent),var(--accent-glow),var(--gold));color:#fff;overflow:hidden;padding:0}
-        .announcement-track{display:flex;animation:scrollAnn 20s linear infinite;white-space:nowrap}
-        @keyframes scrollAnn{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-        .announcement-item{display:inline-flex;align-items:center;gap:12px;padding:10px 32px;font-size:0.9rem;font-weight:600;color:#fff;border-right:1px solid rgba(255,255,255,0.3)}
-        
-        /* HEADER - FIXED with higher z-index */
-        .header{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(10,10,15,0.97);backdrop-filter:blur(20px);padding:0;border-bottom:1px solid rgba(255,255,255,0.05)}
-        .header .container{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
-        .logo{display:flex;align-items:center;gap:10px;z-index:10000}
-        .logo img{height:40px;width:auto;border-radius:8px}
-        .logo-text{font-size:1.4rem;font-weight:800;color:var(--gold);background:linear-gradient(135deg,var(--gold),#c49040);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .logo-sub{font-size:0.6rem;color:var(--gold-light);text-transform:uppercase;letter-spacing:2px}
-        .nav-desktop{display:flex;align-items:center;gap:4px}
-        .nav-desktop a{color:#bbb;font-weight:500;font-size:0.85rem;padding:8px 14px;border-radius:8px;transition:all 0.2s}
-        .nav-desktop a:hover{color:#fff;background:rgba(255,255,255,0.08)}
-        .nav-desktop a i{margin-right:4px;font-size:0.8rem}
-        .cart-btn{position:relative;background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:0.85rem;transition:all 0.2s;z-index:10000}
-        .cart-btn:hover{background:var(--accent-glow);transform:scale(1.05)}
-        .cart-count{position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--dark);width:20px;height:20px;border-radius:50%;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
-        .nav-toggle{display:none;background:none;border:none;color:#fff;font-size:1.5rem;padding:5px;z-index:10000}
-        
-        /* MOBILE MENU */
-        .mobile-menu{position:fixed;top:0;right:-300px;width:280px;height:100vh;background:var(--dark);z-index:9998;padding:80px 24px 24px;transition:right 0.3s ease;border-left:1px solid rgba(255,255,255,0.1)}
-        .mobile-menu.open{right:0}
-        .mobile-menu a{display:block;color:#ccc;padding:12px 0;font-weight:500;border-bottom:1px solid rgba(255,255,255,0.05)}
-        .mobile-menu a:hover{color:var(--gold)}
-        .mobile-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.5rem}
-        
-        /* MAIN CONTENT */
-        main{padding-top:64px}
-        
-        /* HERO */
-        .hero{min-height:85vh;display:flex;align-items:center;background:linear-gradient(135deg,#0a0a0f 0%,#1a1a2e 40%,#16213e 80%);position:relative;overflow:hidden}
-        .hero::before{content:'';position:absolute;top:-50%;right:-20%;width:800px;height:800px;background:radial-gradient(circle,rgba(233,69,96,0.08) 0%,transparent 70%);border-radius:50%}
-        .hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(212,168,83,0.06) 0%,transparent 70%);border-radius:50%}
-        .hero .container{position:relative;z-index:1}
-        .hero-badge{display:inline-block;background:rgba(233,69,96,0.2);color:var(--accent-glow);padding:6px 16px;border-radius:30px;font-size:0.8rem;font-weight:600;margin-bottom:20px;border:1px solid rgba(233,69,96,0.3)}
-        .hero h1{font-size:3.5rem;margin-bottom:16px;color:#fff;line-height:1.1}
-        .hero h1 span{color:var(--gold)}
-        .hero .lead{font-size:1.15rem;color:#aaa;max-width:600px;margin-bottom:32px}
-        .hero-buttons{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:40px}
-        .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-glow));color:#fff;padding:14px 32px;border-radius:12px;border:none;font-weight:700;font-size:1rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px}
-        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(233,69,96,0.4)}
-        .btn-secondary{background:transparent;color:#fff;padding:14px 32px;border-radius:12px;border:2px solid rgba(255,255,255,0.2);font-weight:600;font-size:1rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px}
-        .btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
-        .hero-stats{display:flex;gap:48px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.08)}
-        .hero-stat strong{display:block;font-size:1.8rem;color:var(--gold)}
-        .hero-stat span{font-size:0.85rem;color:#777}
-        
-        /* SECTION STYLES */
-        .section{padding:80px 0;background:var(--bg)}
-        .section-alt{background:var(--bg-card)}
-        .section-header{margin-bottom:40px;text-align:center}
-        .section-header h2{font-size:2rem;color:#fff;position:relative;display:inline-block}
-        .section-header h2::after{content:'';display:block;width:60px;height:3px;background:var(--gold);border-radius:2px;margin-top:8px;margin-left:auto}
-        .section-header p{color:var(--text-light);margin-top:12px}
-        
-        /* CATEGORIES GRID */
-        .categories-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;padding:20px 0}
-        .category-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px 16px;text-align:center;transition:all 0.3s;cursor:pointer}
-        .category-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.3);border-color:var(--gold)}
-        .category-card i{font-size:2rem;margin-bottom:12px;color:var(--accent)}
-        .category-card h4{font-size:0.85rem;color:#ddd}
-        
-        /* PRODUCT GRID */
-        .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px}
-        .product-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all 0.3s}
-        .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
-        .product-image{height:200px;background:var(--bg);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-        .product-image img{width:100%;height:100%;object-fit:cover}
-        .product-badge{position:absolute;top:12px;left:12px;padding:4px 10px;border-radius:6px;font-size:0.7rem;font-weight:700;text-transform:uppercase}
-        .badge-sale{background:var(--accent);color:#fff}
-        .badge-featured{background:var(--gold);color:var(--dark)}
-        .badge-new{background:var(--success);color:#fff}
-        .product-info{padding:16px}
-        .product-brand{font-size:0.7rem;color:var(--text-light);text-transform:uppercase;letter-spacing:1px}
-        .product-name{font-size:1rem;font-weight:600;color:#e0e0e0;margin:4px 0}
-        .product-details{font-size:0.78rem;color:#888;margin:6px 0}
-        .product-strain{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.68rem;font-weight:600;margin-right:4px}
-        .strain-sativa{background:#1e3a5f;color:#93c5fd}
-        .strain-indica{background:#4a1942;color:#c084fc}
-        .strain-hybrid{background:#1a3d2e;color:#6ee7b7}
-        .product-price{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-        .price{font-size:1.25rem;font-weight:700;color:#fff}
-        .price-old{font-size:0.85rem;color:#666;text-decoration:line-through;margin-left:6px}
-        .add-cart{background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;font-size:0.78rem;transition:all 0.2s}
-        .add-cart:hover{background:#2a2a4a}
-        
-        /* FILTER BUTTONS */
-        .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;justify-content:center}
-        .filter-btn{padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:#aaa;font-weight:500;cursor:pointer;transition:all 0.2s;font-size:0.85rem}
-        .filter-btn:hover,.filter-btn.active{background:var(--gold);border-color:var(--gold);color:var(--dark)}
-        
-        /* HOW IT WORKS */
-        .how-it-works{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:32px}
-        .step-card{text-align:center;padding:32px 24px;background:var(--bg-card);border-radius:16px;border:1px solid var(--border)}
-        .step-number{width:60px;height:60px;background:linear-gradient(135deg,var(--accent),var(--accent-glow));color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;margin:0 auto 20px}
-        .step-card h3{color:#fff;margin-bottom:12px}
-        .step-card p{color:#888;font-size:0.9rem}
-        
-        /* LOCATION SECTION */
-        .location-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;margin-top:32px}
-        .location-item{display:flex;gap:16px;align-items:flex-start;padding:20px;background:var(--bg-card);border-radius:12px;border:1px solid var(--border)}
-        .location-item i{font-size:1.5rem;color:var(--accent);margin-top:4px}
-        .location-item h4{color:#fff;margin-bottom:4px;font-size:1rem}
-        .location-item p{color:#888;font-size:0.9rem}
-        
-        /* FAQ */
-        .faq-list{max-width:800px;margin:0 auto}
-        .faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;background:var(--bg-card)}
-        .faq-question{padding:20px 24px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;color:#e0e0e0;transition:background 0.2s}
-        .faq-question:hover{background:rgba(255,255,255,0.03)}
-        .faq-question i{transition:transform 0.3s;color:var(--gold)}
-        .faq-item.open .faq-question i{transform:rotate(180deg)}
-        .faq-answer{padding:0 24px;max-height:0;overflow:hidden;transition:all 0.3s ease;background:rgba(255,255,255,0.02)}
-        .faq-item.open .faq-answer{padding:0 24px 20px;max-height:500px}
-        .faq-answer p{color:#888;font-size:0.9rem}
-        .faq-answer a{color:var(--gold)}
-        
-        /* SELF-CERT BANNER */
-        .selfcert-banner{background:linear-gradient(135deg,var(--accent),var(--accent-glow));color:#fff;padding:16px 0;text-align:center}
-        .selfcert-banner .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;max-width:1400px;margin:0 auto;padding:0 20px}
-        .selfcert-banner p{margin:0;font-size:0.9rem}
-        .selfcert-btn{background:#fff;color:var(--accent);padding:10px 24px;border-radius:8px;font-weight:700;font-size:0.9rem;border:none;cursor:pointer;transition:all 0.2s}
-        .selfcert-btn:hover{transform:scale(1.05)}
-        
-        /* AGE GATE */
-        .age-gate-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.97);z-index:99999;display:flex;align-items:center;justify-content:center}
-        .age-gate-box{background:var(--primary);border-radius:20px;padding:48px;max-width:440px;text-align:center;border:1px solid rgba(255,255,255,0.1)}
-        .age-gate-box h2{color:#fff;margin-bottom:16px;font-size:1.8rem}
-        .age-gate-box p{color:#aaa;margin-bottom:24px}
-        .age-gate-btn{background:linear-gradient(135deg,var(--gold),#c49040);color:var(--dark);border:none;padding:14px 40px;border-radius:12px;font-weight:700;font-size:1.1rem;cursor:pointer;transition:all 0.3s;margin:0 8px}
-        .age-gate-btn:hover{transform:scale(1.05)}
-        .age-gate-btn.secondary{background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.3)}
-        
-        /* FOOTER */
-        .footer{background:#06060a;color:#666;padding:60px 0 30px;border-top:1px solid var(--border)}
-        .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
-        .footer h3{color:#fff;margin-bottom:20px;font-size:1.05rem}
-        .footer ul li{margin-bottom:8px}
-        .footer ul li a{color:#888;font-size:0.88rem;transition:color 0.2s}
-        .footer ul li a:hover{color:var(--gold)}
-        .footer .newsletter-form{display:flex;margin-top:12px}
-        .footer .newsletter-form input{flex:1;padding:10px 16px;border:none;border-radius:8px 0 0 8px;font-size:0.88rem;background:rgba(255,255,255,0.08);color:#fff}
-        .footer .newsletter-form input::placeholder{color:#555}
-        .footer .newsletter-form button{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:0 8px 8px 0;font-weight:600;cursor:pointer}
-        .footer-bottom{border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;text-align:center;font-size:0.78rem;color:#444}
-        .footer-bottom a{color:var(--gold)}
-        .social-links{display:flex;gap:12px;margin-top:16px}
-        .social-links a{color:#666;font-size:1.2rem;transition:color 0.2s}
-        .social-links a:hover{color:var(--gold)}
-        
-        /* BLOG */
-        .blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
-        .blog-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all 0.3s}
-        .blog-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
-        .blog-image{height:180px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:3rem}
-        .blog-image img{width:100%;height:100%;object-fit:cover}
-        .blog-content{padding:24px}
-        .blog-tag{display:inline-block;background:rgba(233,69,96,0.15);color:var(--accent-glow);padding:3px 10px;border-radius:4px;font-size:0.7rem;font-weight:600;text-transform:uppercase}
-        .blog-content h3{color:#fff;font-size:1.15rem;margin:12px 0 8px}
-        .blog-content p{color:#888;font-size:0.88rem}
-        .blog-date{color:#555;font-size:0.78rem;margin-top:8px}
-        .read-more{color:var(--gold);font-weight:600;font-size:0.88rem;margin-top:12px;display:inline-flex;align-items:center;gap:6px}
-        
-        /* CART */
-        .cart-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:2000;display:none;align-items:flex-end;justify-content:center}
-        .cart-overlay.open{display:flex}
-        .cart-panel{background:var(--bg-card);width:100%;max-width:500px;border-radius:20px 20px 0 0;padding:32px;max-height:80vh;overflow-y:auto;animation:slideUp 0.3s ease}
-        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-        .cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-        .cart-header h2{font-size:1.4rem;color:#fff}
-        .cart-close{background:none;border:none;font-size:1.5rem;color:#888}
-        .cart-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
-        .cart-item-img{width:56px;height:56px;border-radius:12px;background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.2rem}
-        .cart-item-info{flex:1}
-        .cart-item-name{font-weight:600;color:#e0e0e0}
-        .cart-item-qty{color:#888;font-size:0.82rem}
-        .cart-item-price{font-weight:700;color:#fff}
-        .cart-total{display:flex;justify-content:space-between;padding:20px 0;font-size:1.25rem;font-weight:700;color:#fff}
-        .checkout-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-glow));color:#fff;border:none;padding:16px;border-radius:12px;font-weight:700;font-size:1rem;margin-top:16px}
-        
-        /* PAGE CONTAINER */
-        .page-container{max-width:1200px;margin:0 auto;padding:0 20px}
-        .page-header{text-align:center;margin-bottom:48px}
-        .page-header h1{font-size:2.5rem;color:#fff;margin-bottom:12px}
-        .page-header p{color:#888;font-size:1.05rem}
-        
-        /* RESPONSIVE */
-        @media(max-width:768px){
-            .nav-desktop{display:none}
-            .nav-toggle{display:block}
-            .hero h1{font-size:2rem}
-            .hero-stats{flex-direction:column;gap:16px}
-            .categories-grid{grid-template-columns:repeat(4,1fr)}
-            .footer-grid{grid-template-columns:1fr 1fr}
-            .selfcert-banner .container{flex-direction:column;text-align:center}
-            .hero{background:linear-gradient(180deg,#0a0a0f 0%,#1a1a2e 50%,#16213e 100%)}
-            .product-image{height:160px}
-        }
-        @media(max-width:480px){
-            .categories-grid{grid-template-columns:repeat(3,1fr)}
-            .footer-grid{grid-template-columns:1fr}
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DREAMZ DC Dispensary | Washington DC Cannabis & Delivery</title>
+  <meta name="description" content="Shop premium cannabis flower, vapes, edibles, and more at DREAMZ DC. Delivery and curbside pickup in Washington DC.">
+  <link rel="canonical" href="https://dreamzdccompound.shop/">
+  <link rel="icon" href="/images/logo.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-
-<!-- AGE GATE -->
-<div class="age-gate-overlay" id="ageGate">
-    <div class="age-gate-box">
-        <div style="font-size:3rem;margin-bottom:16px">🌿</div>
-        <h2>You Must Be 21+</h2>
-        <p>By entering DREAMZ DC, you certify that you are 21 years of age or older.</p>
-        <button class="age-gate-btn" onclick="document.getElementById('ageGate').style.display='none'">ENTER</button>
-        <br>
-        <button class="age-gate-btn secondary" onclick="window.open('https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39','_blank')" style="margin-top:12px">Self-Certify Here</button>
-    </div>
-</div>
-
-<!-- HEADER -->
-<header class="header">
-    <div class="container">
-        <a href="/" class="logo">
-            <img src="/images/logo.jpg" alt="DREAMZ DC Logo">
-            <div>
-                <div class="logo-text">DREAMZ DC</div>
-                <div class="logo-sub">Premium Dispensary</div>
-            </div>
-        </a>
-        <nav class="nav-desktop">
-            <a href="#shop" class="active"><i class="fas fa-shopping-bag"></i> SHOP</a>
-            <a href="#categories"><i class="fas fa-th-large"></i> CATEGORIES</a>
-            <a href="#brands"><i class="fas fa-star"></i> BRANDS</a>
-            <a href="#about"><i class="fas fa-info-circle"></i> ABOUT</a>
-            <a href="#delivery"><i class="fas fa-truck"></i> DELIVERY</a>
-            <a href="#blog"><i class="fas fa-blog"></i> BLOG</a>
-            <a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a>
-            <a href="#med-reg"><i class="fas fa-clipboard-check"></i> MED REG</a>
-            <button class="cart-btn" onclick="openCart()">
-                <i class="fas fa-shopping-cart"></i> Cart
-                <span class="cart-count" id="cartCount">0</span>
-            </button>
-        </nav>
-        <button class="nav-toggle" onclick="toggleMobileMenu()">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-</header>
-
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu">
-    <button class="mobile-close" onclick="toggleMobileMenu()"><i class="fas fa-times"></i></button>
-    <a href="#shop" onclick="toggleMobileMenu()">Shop</a>
-    <a href="#categories" onclick="toggleMobileMenu()">Categories</a>
-    <a href="#brands" onclick="toggleMobileMenu()">Brands</a>
-    <a href="#about" onclick="toggleMobileMenu()">About</a>
-    <a href="#delivery" onclick="toggleMobileMenu()">Delivery</a>
-    <a href="#blog" onclick="toggleMobileMenu()">Blog</a>
-    <a href="#faq" onclick="toggleMobileMenu()">FAQ</a>
-    <a href="#med-reg" onclick="toggleMobileMenu()">Med Reg</a>
-    <a href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" onclick="toggleMobileMenu()" style="color:var(--gold);font-weight:700">Self-Certify</a>
-</div>
-
-<!-- ANNOUNCEMENT BAR -->
-<div class="announcement-bar">
-    <div class="container">
-        <div class="announcement-track" id="annTrack">
-            <span class="announcement-item"><i class="fas fa-fire"></i> FIRST-TIME CUSTOMERS: Get 10% OFF your first order! Use code: DREAMZ10</span>
-            <span class="announcement-item"><i class="fas fa-bolt"></i> BUY 1 VAPE, GET 1 VAPE 50% OFF — Limited time deal on select cartridges!</span>
-            <span class="announcement-item"><i class="fas fa-leaf"></i> NEW DREAMZ COMPOUND STRAINS JUST DROPPED — Check out our latest arrivals!</span>
-            <!-- Duplicate for seamless loop -->
-            <span class="announcement-item"><i class="fas fa-fire"></i> FIRST-TIME CUSTOMERS: Get 10% OFF your first order! Use code: DREAMZ10</span>
-            <span class="announcement-item"><i class="fas fa-bolt"></i> BUY 1 VAPE, GET 1 VAPE 50% OFF — Limited time deal on select cartridges!</span>
-            <span class="announcement-item"><i class="fas fa-leaf"></i> NEW DREAMZ COMPOUND STRAINS JUST DROPPED — Check out our latest arrivals!</span>
-        </div>
-    </div>
-</div>
-
-<!-- MAIN CONTENT -->
 <main>
-
-<!-- HERO -->
-<section class="hero" id="hero">
+  <section class="hero">
     <div class="container">
-        <div class="hero-content">
-            <div class="hero-badge">🚚 Delivery Available • Open 7 Days • 10% Off First Order</div>
-            <h1>DREAMZ <span>DC</span> Dispensary</h1>
-            <p class="lead">Premium cannabis flower, pre-rolls, vapes, edibles, and concentrates delivered to your door in Washington DC. Quality you can see, smell, and taste.</p>
-            <div class="hero-buttons">
-                <a href="#shop" class="btn-primary"><i class="fas fa-shopping-bag"></i> SHOP MENU</a>
-                <a href="#delivery" class="btn-secondary"><i class="fas fa-truck"></i> ORDER DELIVERY</a>
-                <a href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" class="btn-secondary" target="_blank" style="border-color:var(--accent);color:var(--accent)"><i class="fas fa-id-card"></i> SELF-CERTIFY</a>
-            </div>
-            <div class="hero-stats">
-                <div class="hero-stat"><strong>7 Days</strong><span>Open This Week</span></div>
-                <div class="hero-stat"><strong>2+ Hours</strong><span>Avg Delivery</span></div>
-                <div class="hero-stat"><strong>40+</strong><span>Products</span></div>
-                <div class="hero-stat"><strong>100%</strong><span>Lab Tested</span></div>
-            </div>
+      <div>
+        <div class="hero-badge">Delivery + curbside · Open 7 days · 10% off first order</div>
+        <h1>DREAMZ <span>DC</span> Dispensary</h1>
+        <p class="lead">Premium flower, pre-rolls, vapes, edibles, and concentrates in Washington DC. Quality you can see, smell, and taste — delivered or ready at the curb.</p>
+        <div class="hero-buttons">
+          <a class="btn-primary" href="/shop.html"><i class="fas fa-shopping-bag"></i> Shop menu</a>
+          <a class="btn-secondary" href="/delivery.html"><i class="fas fa-truck"></i> Delivery & pickup</a>
+          <a class="btn-secondary" href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" target="_blank" rel="noopener"><i class="fas fa-id-card"></i> Self-certify</a>
         </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong>7 days</strong><span>Open this week</span></div>
+          <div class="hero-stat"><strong>~2 hrs</strong><span>Avg delivery</span></div>
+          <div class="hero-stat"><strong>30+</strong><span>Menu items</span></div>
+          <div class="hero-stat"><strong>100%</strong><span>Lab tested</span></div>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <img src="/images/store inside.jpg" alt="Inside DREAMZ DC">
+      </div>
     </div>
-</section>
+  </section>
 
-<!-- SHOP BY CATEGORY -->
-<section class="section" id="categories">
+  <section class="section">
     <div class="page-container">
-        <div class="section-header">
-            <h2>SHOP BY CATEGORY</h2>
-        </div>
-        <div class="categories-grid">
-            <div class="category-card"><i class="fas fa-paper-plane"></i><h4>FLOWER</h4></div>
-            <div class="category-card"><i class="fas fa-rotate-left"></i><h4>PRE-ROLLS</h4></div>
-            <div class="category-card"><i class="fas fa-droplet"></i><h4>VAPORIZERS</h4></div>
-            <div class="category-card"><i class="fas fa-cookie-bite"></i><h4>EDIBLES</h4></div>
-            <div class="category-card"><i class="fas fa-flask"></i><h4>CONCENTRATES</h4></div>
-            <div class="category-card"><i class="fas fa-band-aid"></i><h4>TOPICALS</h4></div>
-            <div class="category-card"><i class="fas fa-blender"></i><h4>TINCTURES</h4></div>
-            <div class="category-card"><i class="fas fa-gem"></i><h4>ACCESSORIES</h4></div>
-            <div class="category-card"><i class="fas fa-hat-wizard"></i><h4>MERCH</h4></div>
-        </div>
+      <div class="section-header">
+        <h2>Shop by category</h2>
+        <p>Replace these photos anytime in <code>/public/images/categories/</code>.</p>
+      </div>
+      <div class="categories-grid" id="homeCategories"></div>
     </div>
-</section>
+  </section>
 
-<!-- PRODUCTS -->
-<section class="section section-alt" id="shop">
+  <section class="section section-alt" id="shop">
     <div class="page-container">
-        <div class="section-header">
-            <h2>DREAMZ DC POPULAR PRODUCTS</h2>
-            <p>Fresh, potent, and lab-tested cannabis products curated for DC.</p>
-        </div>
-        <div class="filter-bar">
-            <button class="filter-btn active" onclick="filterProducts('all',this)">ALL</button>
-            <button class="filter-btn" onclick="filterProducts('flower',this)">FLOWER</button>
-            <button class="filter-btn" onclick="filterProducts('cartridge',this)">VAPES</button>
-            <button class="filter-btn" onclick="filterProducts('edibles',this)">EDIBLES</button>
-            <button class="filter-btn" onclick="filterProducts('preroll',this)">PRE-ROLLS</button>
-        </div>
-        <div class="products-grid" id="productsGrid">
-            <!-- Populated by JS -->
-        </div>
+      <div class="section-header">
+        <h2>Popular on the menu</h2>
+        <p>Fresh, potent, lab-tested products curated for DC.</p>
+      </div>
+      <div class="products-grid" id="homeProducts"></div>
+      <div style="text-align:center;margin-top:28px">
+        <a class="btn-primary" href="/shop.html">View full shop</a>
+      </div>
     </div>
-</section>
+  </section>
 
-<!-- FLOWER SUBCATEGORIES -->
-<section class="section" id="flower-cats">
+  <section class="section">
     <div class="page-container">
-        <div class="section-header">
-            <h2>SHOP FLOWER BY TYPE</h2>
-        </div>
-        <div class="categories-grid" id="flowerSubcats">
-            <!-- Populated by JS -->
-        </div>
+      <div class="section-header"><h2>How it works</h2></div>
+      <div class="how-it-works">
+        <div class="step-card"><div class="step-number">1</div><h3>Browse the menu</h3><p>Filter by category, brand, or strain and add what you want to your cart.</p></div>
+        <div class="step-card"><div class="step-number">2</div><h3>Self-certify (21+)</h3><p>No medical card needed. Register for a Visitor Pass at the <a href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" target="_blank" rel="noopener" style="color:var(--gold)">self-cert portal</a>.</p></div>
+        <div class="step-card"><div class="step-number">3</div><h3>Delivery or curbside</h3><p>Checkout with delivery to your DC address or curbside pickup on Pennsylvania Ave SE.</p></div>
+      </div>
     </div>
-</section>
-
-<!-- BRANDS -->
-<section class="section section-alt" id="brands">
-    <div class="page-container">
-        <div class="section-header">
-            <h2>FEATURED BRANDS</h2>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:24px">
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 32px;text-align:center;min-width:140px">
-                <div style="font-size:2rem;margin-bottom:8px">🌿</div>
-                <h4 style="color:#fff;font-size:0.9rem">DREAMZ COMPOUND</h4>
-                <p style="color:#666;font-size:0.75rem">Our Signature Line</p>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 32px;text-align:center;min-width:140px">
-                <div style="font-size:2rem;margin-bottom:8px">🍪</div>
-                <h4 style="color:#fff;font-size:0.9rem">Cookies</h4>
-                <p style="color:#666;font-size:0.75rem">Premium Genetics</p>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 32px;text-align:center;min-width:140px">
-                <div style="font-size:2rem;margin-bottom:8px">🌾</div>
-                <h4 style="color:#fff;font-size:0.9rem">Ganjavores</h4>
-                <p style="color:#666;font-size:0.75rem">DC Roots</p>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 32px;text-align:center;min-width:140px">
-                <div style="font-size:2rem;margin-bottom:8px">🍬</div>
-                <h4 style="color:#fff;font-size:0.9rem">Jeeter Juice</h4>
-                <p style="color:#666;font-size:0.75rem">Live Resin</p>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 32px;text-align:center;min-width:140px">
-                <div style="font-size:2rem;margin-bottom:8px">☀️</div>
-                <h4 style="color:#fff;font-size:0.9rem">Sunflower by Eva</h4>
-                <p style="color:#666;font-size:0.75rem">Local Favorites</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section" id="delivery">
-    <div class="page-container">
-        <div class="section-header">
-            <h2>HOW IT WORKS</h2>
-            <p>Fast, reliable, discreet delivery to your door in Washington DC.</p>
-        </div>
-        <div class="how-it-works">
-            <div class="step-card"><div class="step-number">1</div><h3>Browse & Select</h3><p>Explore our full menu of premium cannabis products. Filter by category, brand, or strain type.</p></div>
-            <div class="step-card"><div class="step-number">2</div><h3>Self-Certify (21+)</h3><p>No medical card? No problem. Register for an immediate Visitor Pass at our <a href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" target="_blank" style="color:var(--accent)">self-cert portal</a>.</p></div>
-            <div class="step-card"><div class="step-number">3</div><h3>Order & Receive</h3><p>Place your order for pickup or delivery. Average delivery time: under 2 hours in DC metro area.</p></div>
-        </div>
-    </div>
-</section>
-
-<!-- LOCATION & CONTACT -->
-<section class="section section-alt" id="about">
-    <div class="page-container">
-        <div class="section-header">
-            <h2>VISIT DREAMZ DC</h2>
-        </div>
-        <div class="location-grid">
-            <div class="location-item"><i class="fas fa-map-marker-alt"></i><div><h4>Location</h4><p>611 Pennsylvania Ave SE<br>2nd Floor<br>Washington, DC 20003</p></div></div>
-            <div class="location-item"><i class="fas fa-phone-alt"></i><div><h4>Phone</h4><p>(202) 709-8944</p></div></div>
-            <div class="location-item"><i class="fas fa-envelope"></i><div><h4>Email</h4><p>info@dreamzdccompound.shop</p></div></div>
-            <div class="location-item"><i class="fas fa-clock"></i><div><h4>Hours</h4><p>Sun–Wed: 10AM–12AM<br>Thu–Sat: 10AM–3AM EST</p></div></div>
-        </div>
-    </div>
-</section>
-
-<!-- FAQ -->
-<section class="section" id="faq">
-    <div class="page-container">
-        <div class="section-header">
-            <h2>FREQUENTLY ASKED QUESTIONS</h2>
-        </div>
-        <div class="faq-list">
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">WHERE IS DREAMZ DC LOCATED? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>DREAMZ DC is located at <strong>611 Pennsylvania Ave SE, 2nd Floor</strong>, Washington, DC 20003. We serve the entire DC metro area.</p></div></div>
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">WHAT ARE THE OPERATING HOURS? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p><strong>Sunday–Wednesday:</strong> 10AM–12AM (Midnight)<br><strong>Thursday–Saturday:</strong> 10AM–3AM EST. Open every day of the year including holidays.</p></div></div>
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">DO I NEED A MEDICAL CARD? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>No medical card? No problem! DC's Medical Cannabis Program is now OPEN to non-residents and international visitors 21+. <a href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" target="_blank" style="color:var(--accent)">Click here to register for an instant Visitor Pass</a>.</p></div></div>
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">DO YOU OFFER DELIVERY? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Yes! We offer fast, discreet delivery throughout Washington DC. Average delivery time is under 2 hours. Select delivery at checkout.</p></div></div>
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">ARE PRODUCTS LAB-TESTED? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Absolutely. All DREAMZ DC products are lab-tested for potency, purity, and safety. We provide full cannabinoid profiles and terpene data for every product.</p></div></div>
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">HOW DO I START SHOPPING WITHOUT A MEDICAL CARD? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Adults 21+ can self-certify instantly at our <a href="https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39" target="_blank" style="color:var(--accent)">self-certification portal</a>. No doctor's visit required.</p></div></div>
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">WHAT MAKES DREAMZ DC UNIQUE? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>DREAMZ DC offers a curated selection of premium strains, exclusive DREAMZ COMPOUND branded products, competitive pricing, and fast delivery. We're more than a dispensary — we're the destination for cannabis enthusiasts in DC.</p></div></div>
-            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">CAN I PLACE AN ORDER FOR PICKUP? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Yes! Place your order online and pick it up at our DC location. We offer in-store pickup, kiosk pickup, and delivery.</p></div></div>
-        </div>
-    </div>
-</section>
-
-<!-- BLOG -->
-<section class="section section-alt" id="blog">
-    <div class="page-container">
-        <div class="section-header">
-            <h2>FROM THE BLOG</h2>
-            <p>Stay informed with the latest DREAMZ DC news, tips, and product guides.</p>
-        </div>
-        <div class="blog-grid" id="blogGrid">
-            <!-- Populated by JS -->
-        </div>
-        <div style="text-align:center;margin-top:32px">
-            <a href="/blog" class="btn-secondary" style="display:inline-flex"><i class="fas fa-arrow-right"></i> VIEW ALL ARTICLES</a>
-        </div>
-    </div>
-</section>
-
+  </section>
 </main>
-
-<!-- FOOTER -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div>
-                <img src="/images/logo.jpg" alt="DREAMZ DC Logo" style="height:36px;margin-bottom:12px;border-radius:6px">
-                <h3>DREAMZ DC</h3>
-                <p style="color:#777;font-size:0.9rem;margin-bottom:16px">Washington DC's premier cannabis dispensary & delivery service. Premium quality, fast delivery, every day.</p>
-                <div class="social-links">
-                    <a href="https://www.instagram.com/dccompound_" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.facebook.com/dccompound" target="_blank"><i class="fab fa-facebook"></i></a>
-                    <a href="https://www.x.com/dccompound" target="_blank"><i class="fab fa-x-twitter"></i></a>
-                </div>
-            </div>
-            <div><h3>SITE</h3><ul><li><a href="#shop">Shop</a></li><li><a href="#categories">Categories</a></li><li><a href="#brands">Brands</a></li><li><a href="#about">About</a></li><li><a href="#delivery">Delivery</a></li></ul></div>
-            <div><h3>RESOURCES</h3><ul><li><a href="#med-reg">Medical Registration</a></li><li><a href="#faq">FAQ</a></li><li><a href="#blog">Blog</a></li><li><a href="#">Events</a></li><li><a href="#">Contact</a></li></ul></div>
-            <div>
-                <h3>CONTACT</h3>
-                <ul>
-                    <li><a href="tel:2027098944">(202) 709-8944</a></li>
-                    <li><a href="mailto:info@dreamzdccompound.shop">info@dreamzdccompound.shop</a></li>
-                    <li style="color:#777;font-size:0.85rem">611 Pennsylvania Ave SE<br>2nd Floor, Washington, DC 20003</li>
-                </ul>
-                <div style="margin-top:16px">
-                    <h4 style="color:#fff;font-size:0.85rem;margin-bottom:8px">NEWSLETTER</h4>
-                    <div class="newsletter-form">
-                        <input type="email" placeholder="Your email">
-                        <button onclick="alert('Subscribed!')"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 DREAMZ DC. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p>
-            <p style="margin-top:8px;font-size:0.72rem">FDA Disclaimer: These statements have not been evaluated by the FDA. Cannabis is for use only by persons 21 years of age or older.</p>
-        </div>
-    </div>
-</footer>
-
-<!-- CART -->
-<div class="cart-overlay" id="cartOverlay" onclick="if(event.target===this)closeCart()">
-    <div class="cart-panel">
-        <div class="cart-header"><h2>Your Cart</h2><button class="cart-close" onclick="closeCart()"><i class="fas fa-times"></i></button></div>
-        <div id="cartItems"><p style="color:#888;text-align:center;padding:40px 0">Your cart is empty</p></div>
-        <div id="cartFooter" style="display:none">
-            <div class="cart-total"><span>Total</span><span id="cartTotal">$0.00</span></div>
-            <button class="checkout-btn" onclick="alert('Checkout coming soon!')">Proceed to Checkout</button>
-        </div>
-    </div>
-</div>
-
-<script>
-// === DATA ===
-const PRODUCTS = [
-    {id:'dreamz-compound-flower',name:'DREAMZ Compound Flower',brand:'DREAMZ COMPOUND',type:'flower',strain:'Hybrid',strainType:'hybrid',thc:'27%',terps:'2.5%',price:54,oldPrice:58,badge:'sale',image:'storefront.jpg'},
-    {id:'dreamz-vape-cartridge',name:'DREAMZ Vape Cartridge 1g',brand:'DREAMZ COMPOUND',type:'cartridge',strain:'Indica',strainType:'indica',thc:'76%',terps:'2.9%',price:72,oldPrice:null,badge:'featured',image:'storefront.jpg'},
-    {id:'dreamz-gummies-1000mg',name:'DREAMZ Gummies 1000mg',brand:'DREAMZ COMPOUND',type:'edibles',strain:'Hybrid',strainType:'hybrid',thc:'~85-90%',terps:'N/A',price:60,oldPrice:75,badge:'sale',image:'storefront.jpg'},
-    {id:'ganjavores-green-crack',name:'Ganjavores Green Crack',brand:'Ganjavores',type:'flower',strain:'Sativa',strainType:'sativa',thc:'24%',terps:'<1%',price:45,oldPrice:null,badge:null,image:'Green Crack by Ganjavores - Premium Flower.jpg'},
-    {id:'ganjavores-sour-diesel',name:'Ganjavores Sour Diesel',brand:'Ganjavores',type:'flower',strain:'Sativa',strainType:'sativa',thc:'26%',terps:'<1%',price:45,oldPrice:null,badge:null,image:'Sour Diesel by Ganjavores - Hybrid - 3.5G Jars - Top Shelf Whole Flower.jpg'},
-    {id:'cookies-madrina',name:'Cookies Madrina Pre-Roll',brand:'Cookies',type:'preroll',strain:'Sativa',strainType:'sativa',thc:'27.16%',terps:'2.90%',price:18,oldPrice:16.20,badge:'sale',image:'storefront.jpg'},
-    {id:'cookies-blue-suede',name:'Cookies Blue Suede Flower',brand:'Cookies',type:'flower',strain:'Indica Hybrid',strainType:'hybrid',thc:'21.47%',terps:'2.26%',price:44.10,oldPrice:48,badge:'sale',image:'Blueberry Banana by Cookies.jpg'},
-    {id:'cookies-berniehana',name:'Cookies BernieHana Butter',brand:'Cookies',type:'cartridge',strain:'Indica',strainType:'indica',thc:'76.58%',terps:'2.91%',price:72,oldPrice:null,badge:'featured',image:'storefront.jpg'},
-    {id:'cookies-hollywood',name:'Cookies Hollywood Flower',brand:'Cookies',type:'flower',strain:'Indica Hybrid',strainType:'hybrid',thc:'24.04%',terps:'1.08%',price:49,oldPrice:null,badge:null,image:'storefront.jpg'},
-    {id:'jeeter-ice-cream-cake',name:'Ice Cream Cake Disposable',brand:'Jeeter Juice',type:'cartridge',strain:'Indica',strainType:'indica',thc:'~82-88%',terps:'N/A',price:65,oldPrice:null,badge:null,image:'Jeeter Juice - Ice Cream Cake (Indica) 500mg- Disposable Straw Vape - 1G - Live Resin.jpg'},
-    {id:'jeeter-wedding-cake',name:'Wedding Cake Disposable',brand:'Jeeter Juice',type:'cartridge',strain:'Hybrid',strainType:'hybrid',thc:'~83-88%',terps:'N/A',price:65,oldPrice:null,badge:null,image:'Jeeter Juice - Wedding Cake (Hybrid) - Disposable Straw Vape - 1G - Live Resin.jpg'},
-    {id:'jenny-kush',name:'Jenny Kush',brand:'Cultivation Labs',type:'flower',strain:'Balanced Hybrid',strainType:'hybrid',thc:'32%',terps:'<1%',price:58,oldPrice:null,badge:'new',image:'Jenny Kush by Cultivation Labs - Top Shelf Whole Flower.jpg'},
-];
-
-const FLOWER_SUBCATS = [
-    {slug:'bulk-flower',name:'BULK FLOWER',image:'bulk-flower.jpg'},
-    {slug:'pre-ground',name:'PRE-GROUND',image:'Code_Generated_Image (34) - Copy.jpg'},
-    {slug:'premium',name:'PREMIUM',image:'Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg'},
-    {slug:'shake-trim',name:'SHAKE TRIM',image:'Code_Generated_Image (10).jpg'},
-    {slug:'small-buds',name:'SMALL BUDS',image:'Code_Generated_Image (12).jpg'},
-    {slug:'whole-flower',name:'WHOLE FLOWER',image:'storefront.jpg'}
-];
-
-const BLOG_POSTS = [
-    {title:'How To Buy Weed In Washington, DC',date:'Sep 5, 2026',tag:'Guide',excerpt:'Learn everything you need to know about purchasing cannabis in Washington DC, including self-certification, product types, and what to expect.',image:'Code_Generated_Image (1).jpg'},
-    {title:'How Delivery Works in Washington, DC',date:'Sep 4, 2026',tag:'Delivery',excerpt:'DREAMZ DC offers fast, reliable delivery throughout the DC metro area. Here\'s how our delivery process works from order to doorstep.',image:'Code_Generated_Image (12).jpg'},
-    {title:'Understanding Cannabis Strains: Indica vs Sativa vs Hybrid',date:'Sep 3, 2026',tag:'Education',excerpt:'Confused about strain types? Learn the differences between indica, sativa, and hybrid cannabis and which might be right for you.',image:'Code_Generated_Image (13).jpg'},
-    {title:'DREAMZ DC Product Guide: What\'s New This Month',date:'Sep 2, 2026',tag:'Products',excerpt:'Check out our latest arrivals including DREAMZ Compound flower, new Jeeter Juice disposables, and exclusive Ganjavores selections.',image:'Code_Generated_Image (15).jpg'},
-    {title:'Cannabis Safety: What to Look For',date:'Sep 1, 2026',tag:'Safety',excerpt:'All DREAMZ DC products are lab-tested. Here\'s what you should know about potency, terpene profiles, and cannabis safety standards.',image:'Code_Generated_Image (17).jpg'}
-];
-
-// === CART ===
-let cart = [];
-function addToCart(productId, name, price, image) {
-    const existing = cart.find(i => i.productId === productId);
-    if (existing) { existing.qty++; } else { cart.push({productId, name, price, image, qty:1}); }
-    updateCart();
-    showToast(name + ' added to cart!');
-}
-function updateCart() {
-    const count = cart.reduce((s,i) => s+i.qty, 0);
-    document.getElementById('cartCount').textContent = count;
-    renderCart();
-}
-function renderCart() {
-    const itemsEl = document.getElementById('cartItems');
-    const footerEl = document.getElementById('cartFooter');
-    if (!cart.length) { itemsEl.innerHTML='<p style="color:#888;text-align:center;padding:40px 0">Your cart is empty</p>'; footerEl.style.display='none'; return; }
-    let total = 0;
-    itemsEl.innerHTML = cart.map(item => {
-        total += item.price * item.qty;
-        return `<div class="cart-item"><div class="cart-item-img"><i class="fas fa-cannabis"></i></div><div class="cart-item-info"><div class="cart-item-name">${item.name}</div><div class="cart-item-qty">Qty: ${item.qty}</div><div class="cart-item-price">$${(item.price*item.qty).toFixed(2)}</div></div></div>`;
-    }).join('');
-    document.getElementById('cartTotal').textContent='$'+total.toFixed(2);
-    footerEl.style.display='block';
-}
-function openCart(){document.getElementById('cartOverlay').classList.add('open')}
-function closeCart(){document.getElementById('cartOverlay').classList.remove('open')}
-
-// === FILTER PRODUCTS ===
-function filterProducts(type, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.remove('active');b.style.background='transparent';b.style.border='1px solid var(--border)';b.style.color='#aaa'});
-    btn.classList.add('active');btn.style.background='var(--gold)';btn.style.border='2px solid var(--gold)';btn.style.color='var(--dark)';
-    const grid = document.getElementById('productsGrid');
-    const filtered = type==='all' ? PRODUCTS : PRODUCTS.filter(p=>p.type===type);
-    grid.innerHTML = filtered.map(p=>{
-        const stClass=p.strainType||'hybrid';
-        return `<div class="product-card"><div class="product-image" style="background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:3rem"><img src="/images/${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover"><span class="product-badge badge-${p.badge||''}">${p.badge||''}</span></div><div class="product-info"><div class="product-brand">${p.brand}</div><div class="product-name">${p.name}</div><div class="product-details"><span class="product-strain strain-${stClass}">${p.strain}</span> THC ${p.thc}</div><div class="product-price"><span class="price">$${p.price}${p.oldPrice?'<span class="price-old">$'+p.oldPrice+'</span>':''}</span><button class="add-cart" onclick="addToCart('${p.id}','${p.name}',${p.price},'${p.image}')">ADD</button></div></div></div>`;
-    }).join('');
-}
-
-// === FLOWER SUBCATEGORIES ===
-function renderFlowerSubcats() {
-    const el = document.getElementById('flowerSubcats');
-    if (!el) return;
-    el.innerHTML = FLOWER_SUBCATS.map(s=>`<div class="category-card"><img src="/images/${s.image}" alt="${s.name}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin-bottom:12px"><h4>${s.name}</h4></div>`).join('');
-}
-
-// === BLOG ===
-function renderBlog() {
-    const el = document.getElementById('blogGrid');
-    if (!el) return;
-    el.innerHTML = BLOG_POSTS.map(p=>`<div class="blog-card"><div class="blog-image"><img src="/images/${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover"></div><div class="blog-content"><span class="blog-tag">${p.tag}</span><h3>${p.title}</h3><p>${p.excerpt}</p><div class="blog-date">${p.date}</div><a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a></div></div>`).join('');
-}
-
-// === FAQ ===
-function toggleFaq(el){el.parentElement.classList.toggle('open')}
-
-// === MOBILE MENU ===
-function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('open')}
-
-// === HEADER SCROLL ===
-window.addEventListener('scroll',()=>{document.querySelector('.header').classList.toggle('scrolled',window.scrollY>50)});
-
-// === TOAST ===
-function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:12px 24px;border-radius:8px;font-weight:600;z-index:99999;font-size:0.9rem';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
-
-// === INIT ===
-filterProducts('all',document.querySelector('.filter-btn'));
-renderFlowerSubcats();
-renderBlog();
-</script>
+<script src="/js/products.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/site.js"></script>
+<script src="/js/shop.js"></script>
 </body>
 </html>
