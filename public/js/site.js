@@ -122,9 +122,14 @@
     document.body.insertAdjacentHTML('afterbegin', header);
     document.body.insertAdjacentHTML('beforeend', footer);
 
-    if (!localStorage.getItem(window.DREAMZ_AGE_KEY)) {
+    const AGE_KEY = window.DREAMZ_AGE_KEY || 'dreamz_age_ok_2026';
+    window.DREAMZ_AGE_KEY = AGE_KEY;
+    if (document.getElementById('dz-age-overlay') || document.getElementById('ageGate')) {
+      /* age-gate.js or homepage markup already owns the overlay */
+    } else if (localStorage.getItem(AGE_KEY) !== 'yes') {
       const gate = document.createElement('div');
       gate.className = 'age-gate-overlay';
+      gate.id = 'ageGate';
       gate.innerHTML = `<div class="age-gate-box">
         <div style="font-size:2.4rem;margin-bottom:8px">🌿</div>
         <h2 style="margin-bottom:10px">You Must Be 21+</h2>
@@ -133,11 +138,13 @@
         <button class="age-gate-btn" type="button" style="background:transparent;color:#fff;border:1px solid #555" id="ageCert">Self-Certify Here</button>
       </div>`;
       document.body.appendChild(gate);
+      document.body.style.overflow = 'hidden';
       gate.querySelector('#ageEnter').onclick = () => {
-        localStorage.setItem(window.DREAMZ_AGE_KEY, '1');
+        localStorage.setItem(AGE_KEY, 'yes');
         gate.remove();
+        document.body.style.overflow = '';
       };
-      gate.querySelector('#ageCert').onclick = () => window.open(SELF_CERT, '_blank');
+      gate.querySelector('#ageCert').onclick = () => { window.location.href = SELF_CERT; };
     }
   }
 

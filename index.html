@@ -408,8 +408,8 @@
             <div style="font-size:3rem;margin-bottom:16px">🌿</div>
             <h2>You Must Be 21+</h2>
             <p>By entering DREAMZ DC, you certify that you are 21 years of age or older.</p>
-            <button class="age-gate-btn" onclick="document.getElementById('ageGate').style.display='none'">ENTER</button>
-            <button class="age-gate-btn secondary" onclick="window.location.href='https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39'" style="margin-top:12px">Self-Certify</button>
+            <button class="age-gate-btn" type="button" id="homeAgeEnter">I&rsquo;m 21+ — Enter</button>
+            <button class="age-gate-btn secondary" type="button" onclick="window.location.href='https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39'" style="margin-top:12px">Self-Certify</button>
         </div>
     </div>
 
@@ -896,8 +896,23 @@
             setTimeout(() => toast.remove(), 2000);
         }
 
-        // === AGE GATE - AUTO-DISMISS AFTER 5S ===
-        setTimeout(() => { document.getElementById('ageGate').style.display = 'none'; }, 5000);
+        // === AGE GATE — persist, never auto-dismiss ===
+        (function () {
+            var KEY = 'dreamz_age_ok_2026';
+            var gate = document.getElementById('ageGate');
+            if (!gate) return;
+            if (localStorage.getItem(KEY) === 'yes') {
+                gate.style.display = 'none';
+                return;
+            }
+            var enter = document.getElementById('homeAgeEnter');
+            if (enter) {
+                enter.addEventListener('click', function () {
+                    localStorage.setItem(KEY, 'yes');
+                    gate.style.display = 'none';
+                });
+            }
+        })();
 
         // === INIT PRODUCTS ===
         filterProducts('all', document.querySelector('.filter-btn'));
