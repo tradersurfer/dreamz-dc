@@ -46,9 +46,3 @@ __test__/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
-
-node_modules/
-.vercel
-
-node_modules/
-.env*

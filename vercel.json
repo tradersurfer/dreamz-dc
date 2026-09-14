@@ -1,0 +1,27 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/shop", "destination": "/public/shop.html" },
+    { "source": "/shop.html", "destination": "/public/shop.html" },
+    { "source": "/product", "destination": "/public/product.html" },
+    { "source": "/product.html", "destination": "/public/product.html" },
+    { "source": "/checkout", "destination": "/public/checkout.html" },
+    { "source": "/checkout.html", "destination": "/public/checkout.html" },
+    { "source": "/about", "destination": "/public/about.html" },
+    { "source": "/about.html", "destination": "/public/about.html" },
+    { "source": "/brands", "destination": "/public/brands.html" },
+    { "source": "/brands.html", "destination": "/public/brands.html" },
+    { "source": "/delivery", "destination": "/public/delivery.html" },
+    { "source": "/delivery.html", "destination": "/public/delivery.html" },
+    { "source": "/faq", "destination": "/public/faq.html" },
+    { "source": "/faq.html", "destination": "/public/faq.html" },
+    { "source": "/blog", "destination": "/public/blog.html" },
+    { "source": "/blog.html", "destination": "/public/blog.html" },
+    { "source": "/med-reg", "destination": "/public/med-reg.html" },
+    { "source": "/med-reg.html", "destination": "/public/med-reg.html" },
+    { "source": "/components/:path*", "destination": "/public/components/:path*" },
+    { "source": "/js/:path*", "destination": "/public/js/:path*" },
+    { "source": "/css/:path*", "destination": "/public/css/:path*" },
+    { "source": "/images/:path*", "destination": "/public/images/:path*" }
+  ]
+}
