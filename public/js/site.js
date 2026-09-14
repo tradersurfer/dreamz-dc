@@ -130,6 +130,9 @@
       const gate = document.createElement('div');
       gate.className = 'age-gate-overlay';
       gate.id = 'ageGate';
+    if (!localStorage.getItem(window.DREAMZ_AGE_KEY)) {
+      const gate = document.createElement('div');
+      gate.className = 'age-gate-overlay';
       gate.innerHTML = `<div class="age-gate-box">
         <div style="font-size:2.4rem;margin-bottom:8px">🌿</div>
         <h2 style="margin-bottom:10px">You Must Be 21+</h2>
@@ -145,6 +148,11 @@
         document.body.style.overflow = '';
       };
       gate.querySelector('#ageCert').onclick = () => { window.location.href = SELF_CERT; };
+      gate.querySelector('#ageEnter').onclick = () => {
+        localStorage.setItem(window.DREAMZ_AGE_KEY, '1');
+        gate.remove();
+      };
+      gate.querySelector('#ageCert').onclick = () => window.open(SELF_CERT, '_blank');
     }
   }
 
