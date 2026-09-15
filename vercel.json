@@ -23,5 +23,13 @@
     { "source": "/js/:path*", "destination": "/public/js/:path*" },
     { "source": "/css/:path*", "destination": "/public/css/:path*" },
     { "source": "/images/:path*", "destination": "/public/images/:path*" }
+    { "source": "/shop", "destination": "/shop.html" },
+    { "source": "/product", "destination": "/product.html" },
+    { "source": "/checkout", "destination": "/checkout.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/brands", "destination": "/brands.html" },
+    { "source": "/delivery", "destination": "/delivery.html" },
+    { "source": "/faq", "destination": "/faq.html" },
+    { "source": "/blog", "destination": "/blog.html" }
   ]
 }

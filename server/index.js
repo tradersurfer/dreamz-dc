@@ -6,8 +6,8 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const publicDir = path.join(__dirname, '..', 'public');
 
-// Middleware
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -19,32 +19,18 @@ app.use(helmet({
             connectSrc: ["'self'"],
         }
     }
+    contentSecurityPolicy: false
 }));
 app.use(cors());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(publicDir, { maxAge: '1d' }));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '..', 'public'), {
-    maxAge: '1d',
-    setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        }
-        if (filePath.endsWith('.css')) {
-            res.setHeader('Content-Type', 'text/css');
-        }
-    }
-}));
+app.use('/api', require('./routes/products'));
+app.use('/api', require('./routes/cart'));
+app.use('/api', require('./routes/orders'));
 
-// API Routes
-const productsRouter = require('./routes/products');
-const cartRouter = require('./routes/cart');
-app.use('/api', productsRouter);
-app.use('/api', cartRouter);
-
-// Health check
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString(), service: 'DREAMZ DC' });
 });
@@ -68,11 +54,23 @@ app.get('/', (req, res) => {
 // Blog route
 app.get('/blog', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'blog.html'));
+const pages = {
+    '/': 'index.html',
+    '/shop': 'shop.html',
+    '/product': 'product.html',
+    '/checkout': 'checkout.html',
+    '/about': 'about.html',
+    '/brands': 'brands.html',
+    '/delivery': 'delivery.html',
+    '/faq': 'faq.html',
+    '/blog': 'blog.html',
+    '/cart': 'checkout.html'
+};
+
+app.get(Object.keys(pages), (req, res) => {
+    res.sendFile(path.join(publicDir, pages[req.path] || 'index.html'));
 });
 
-// Start server
 app.listen(PORT, () => {
-    console.log(`\n🚀 DREAMZ DC Server running on port ${PORT}`);
-    console.log(`📍 http://localhost:${PORT}`);
-    console.log(`🌐 DREAMZ DC Dispensary - Washington DC\n`);
+    console.log(`DREAMZ DC running on http://localhost:${PORT}`);
 });
