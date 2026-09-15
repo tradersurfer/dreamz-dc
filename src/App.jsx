@@ -260,6 +260,17 @@ function Footer() {
     );
 }
 
+// === ANNOUNCEMENT BAR ===
+function AnnouncementBar() {
+    return (
+        <div className="announcement-bar">
+            <div className="announcement-content">
+                🔥 <strong>LIMITED TIME:</strong> 10% OFF first order! Free delivery on orders $75+. 🌿 Lab-tested products. 🚚 Delivery 7 days a week. Call (202) 709-8944.
+            </div>
+        </div>
+    );
+}
+
 // === HERO ===
 function Hero() {
     const { CATEGORIES, CATEGORY_ICONS } = useApp();
@@ -267,6 +278,7 @@ function Hero() {
         <section className="hero" id="hero">
             <div className="container">
                 <div className="hero-content">
+                    <AnnouncementBar />
                     <div className="hero-badge">🚚 Delivery Available • Open 7 Days • 10% Off First Order</div>
                     <h1>DREAMZ <span>DC</span> Dispensary</h1>
                     <p className="lead">Premium flower, pre-rolls, vapes, edibles, and concentrates in Washington DC. Quality you can see, smell, and taste — delivered or ready at the curb.</p>
@@ -305,11 +317,11 @@ function CategorySection({ title, icon, products }) {
     );
 }
 
-// === PRODUCT CARD ===
+// === PRODUCT CARD — CLICKABLE ===
 function ProductCard({ product }) {
     const { addToCart } = useApp();
     return (
-        <div className="product-card">
+        <a href={`/product/${product.id}`} className="product-card">
             <div className="product-image">
                 <img src={product.image} alt={product.name} />
                 {product.badge && <span className={`product-badge badge-${product.badge}`}>{product.badge}</span>}
@@ -320,10 +332,10 @@ function ProductCard({ product }) {
                 <div className="product-details">{product.strain} • {product.thc} • {product.terps !== 'N/A' ? `${product.terps} terpenes` : ''}</div>
                 <div className="product-price">
                     <span className="price">${product.price}{product.oldPrice && <span className="price-old">${product.oldPrice}</span>}</span>
-                    <button className="add-cart" onClick={() => addToCart(product)}>ADD</button>
+                    <button className="add-cart" onClick={(e) => { e.preventDefault(); addToCart(product); }}>ADD</button>
                 </div>
             </div>
-        </div>
+        </a>
     );
 }
 
