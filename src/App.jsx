@@ -1,9 +1,8 @@
-import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { Icon } from '@iconify/react';
-import './styles.css';
+import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { Icon } from '@iconify/react'
+import './styles.css'
 
-// === BUSINESS CONFIG ===
 const BUSINESS = {
     name: 'DREAMZ DC',
     displayName: 'DREAMZ DC Compound',
@@ -25,7 +24,7 @@ const BUSINESS = {
         { day: 'Friday', open: '10:00 AM', close: '3:00 AM' },
         { day: 'Saturday', open: '10:00 AM', close: '3:00 AM' },
     ],
-};
+}
 
 const CATEGORIES = [
     { slug: 'flower', name: 'Flower', icon: 'mdi:cannabis' },
@@ -36,10 +35,10 @@ const CATEGORIES = [
     { slug: 'topical', name: 'Topicals', icon: 'mdi:band-aid' },
     { slug: 'tincture', name: 'Tinctures', icon: 'mdi:bottle-tonic-outline' },
     { slug: 'accessories', name: 'Merch', icon: 'mdi:hat-wizard' },
-];
+]
 
 const BRANDS = [
-    { name: 'DREAMZ COMPOUND', logo: 'https://dreamzdccompound.shop/images/logo.jpg', blurb: 'Our signature line — flower, vapes, edibles, topicals.' },
+    { name: 'DREAMZ COMPOUND', logo: '/images/logo.jpg', blurb: 'Our signature line — flower, vapes, edibles, topicals.' },
     { name: 'Cookies', logo: '/images/Blueberry Banana by Cookies.jpg', blurb: 'Premium flower and genetics.' },
     { name: 'Ganjavores', logo: '/images/ganjavores-store.jpg', blurb: 'DC favorite — Green Crack, Sour Diesel.' },
     { name: 'Jeeter Juice', logo: '/images/Jeeter Juice - Ice Cream Banana (Indica)  - Disposable Straw Vape - 1G - Live Resin.jpg', blurb: 'Premium disposables and vapes.' },
@@ -49,9 +48,8 @@ const BRANDS = [
     { name: 'Jungle Boys', logo: '/images/Gelato 33 by Jungle Boys - Premium Flower.jpg', blurb: 'Gelato 33 and premium strains.' },
     { name: 'BackpackBoyz', logo: '/images/BackPackBoyz Lemon & Cherriez disposable vape, 2g, All-In-One, Live Resin, Melted Diamonds.jpg', blurb: 'Lemon & Cherriez disposables.' },
     { name: 'Trulieve', logo: '/images/Cultivar Collection by Trulieve - Bubble Gum Kush - Premium Whole Flower.jpg', blurb: 'Bubble Gum Kush and more.' },
-];
+]
 
-// === PRODUCTS DATA (simplified for demo) ===
 const PRODUCTS = [
     { id: 1, name: 'DREAMZ Compound Flower', brand: 'DREAMZ COMPOUND', category: 'Flower', type: 'flower', strain: 'Hybrid', thc: '27%', terps: '2.5%', price: 54.00, oldPrice: 58.00, badge: 'sale', description: 'Premium DREAMZ Compound flower — a balanced hybrid with rich terpene profile. Perfect for any occasion. Lab-tested, high potency.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
     { id: 2, name: 'DREAMZ Vape Cartridge', brand: 'DREAMZ COMPOUND', category: 'Vapes', type: 'cartridge', strain: 'Indica', thc: '76%', terps: '2.9%', price: 72.00, oldPrice: null, badge: 'new', description: 'DREAMZ Vape Cartridge 1g — high-purity distillate with natural terpenes. Smooth, potent, and reliable.', image: '/images/storefront.jpg' },
@@ -73,9 +71,8 @@ const PRODUCTS = [
     { id: 18, name: 'DREAMZ Topicals', brand: 'DREAMZ COMPOUND', category: 'Topicals', type: 'topical', strain: 'Balanced', thc: '<1%', terps: 'N/A', price: 35.00, oldPrice: null, badge: null, description: 'DREAMZ Topicals — CBD-infused balms and lotions for localized relief.', image: '/images/bulk-flower.jpg' },
     { id: 19, name: 'DREAMZ Tincture', brand: 'DREAMZ COMPOUND', category: 'Tinctures', type: 'tincture', strain: 'Hybrid', thc: '1000mg', terps: 'N/A', price: 55.00, oldPrice: null, badge: null, description: 'DREAMZ Tincture — fast-acting liquid extract with 1000mg THC.', image: '/images/bulk-flower.jpg' },
     { id: 20, name: 'Trulieve Bubble Gum Kush', brand: 'Trulieve', category: 'Flower', type: 'flower', strain: 'Indica', thc: '25%', terps: '1.5%', price: 45.00, oldPrice: null, badge: null, description: 'Cultivar Collection by Trulieve — Bubble Gum Kush with sweet berry flavor.', image: '/images/Cultivar Collection by Trulieve - Bubble Gum Kush - Premium Whole Flower.jpg' },
-];
+]
 
-// === CATEGORY ICON MAP ===
 const CATEGORY_ICONS = {
     flower: 'mdi:cannabis',
     preroll: 'mdi:flower',
@@ -85,73 +82,71 @@ const CATEGORY_ICONS = {
     topical: 'mdi:band-aid',
     tincture: 'mdi:bottle-tonic-outline',
     accessories: 'mdi:hat-wizard',
-};
+}
 
-// === CONTEXT ===
-const AppContext = createContext();
+const AppContext = createContext()
 
 function AppProvider({ children }) {
-    const [cart, setCart] = useState([]);
-    const [ageVerified, setAgeVerified] = useState(false);
-    const [user, setUser] = useState(null);
-    const [orders, setOrders] = useState([]);
-    const [promos, setPromos] = useState([]);
-    const [notifications, setNotifications] = useState([]);
+    const [cart, setCart] = useState([])
+    const [ageVerified, setAgeVerified] = useState(false)
+    const [user, setUser] = useState(null)
+    const [orders, setOrders] = useState([])
+    const [promos, setPromos] = useState([])
+    const [notifications, setNotifications] = useState([])
 
     const addToCart = useCallback((product) => {
         setCart(prev => {
-            const existing = prev.find(item => item.id === product.id);
-            if (existing) return prev.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item);
-            return [...prev, { ...product, qty: 1 }];
-        });
-    }, []);
+            const existing = prev.find(item => item.id === product.id)
+            if (existing) return prev.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item)
+            return [...prev, { ...product, qty: 1 }]
+        })
+    }, [])
 
     const removeFromCart = useCallback((productId) => {
-        setCart(prev => prev.filter(item => item.id !== productId));
-    }, []);
+        setCart(prev => prev.filter(item => item.id !== productId))
+    }, [])
 
     const updateQty = useCallback((productId, qty) => {
-        if (qty <= 0) { removeFromCart(productId); return; }
-        setCart(prev => prev.map(item => item.id === productId ? { ...item, qty } : item));
-    }, [removeFromCart]);
+        if (qty <= 0) { removeFromCart(productId); return }
+        setCart(prev => prev.map(item => item.id === productId ? { ...item, qty } : item))
+    }, [removeFromCart])
 
-    const cartCount = cart.reduce((s, i) => s + i.qty, 0);
-    const cartTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+    const cartCount = cart.reduce((s, i) => s + i.qty, 0)
+    const cartTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0)
 
     const value = useMemo(() => ({
         BUSINESS, CATEGORIES, BRANDS, PRODUCTS, CATEGORY_ICONS,
         cart, cartCount, cartTotal, addToCart, removeFromCart, updateQty,
         ageVerified, setAgeVerified, user, setUser,
         orders, setOrders, promos, setPromos, notifications, setNotifications,
-    }), [cart, cartCount, cartTotal, addToCart, removeFromCart, updateQty, ageVerified, user, orders, promos, notifications]);
+    }), [cart, cartCount, cartTotal, addToCart, removeFromCart, updateQty, ageVerified, user, orders, promos, notifications])
 
-    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+    return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
 
-function useApp() { return useContext(AppContext); }
+function useApp() { return useContext(AppContext) }
 
-// === AGE GATE ===
 function AgeGate() {
-    const [show, setShow] = useState(!localStorage.getItem('dreamz_age_ok'));
-    const [dob, setDob] = useState('');
-    const [error, setError] = useState('');
-    const { setAgeVerified } = useApp();
+    const [show, setShow] = useState(!localStorage.getItem('dreamz_age_ok'))
+    const [dob, setDob] = useState('')
+    const [error, setError] = useState('')
+    const { setAgeVerified } = useApp()
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!dob) { setError('Please enter your date of birth'); return; }
-        const birth = new Date(dob);
-        const today = new Date();
-        let age = today.getFullYear() - birth.getFullYear();
-        const monthDiff = today.getMonth() - birth.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
-        if (age < 21) { setError('You must be 21 or older'); return; }
-        localStorage.setItem('dreamz_age_ok', 'yes');
-        setShow(false);
-        setAgeVerified(true);
-    };
+        e.preventDefault()
+        if (!dob) { setError('Please enter your date of birth'); return }
+        const birth = new Date(dob)
+        const today = new Date()
+        let age = today.getFullYear() - birth.getFullYear()
+        const monthDiff = today.getMonth() - birth.getMonth()
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--
+        if (age < 21) { setError('You must be 21 or older'); return }
+        localStorage.setItem('dreamz_age_ok', 'yes')
+        setShow(false)
+        setAgeVerified(true)
+    }
 
-    if (!show) return null;
+    if (!show) return null
     return (
         <div className="age-gate-overlay">
             <div className="age-gate-box">
@@ -166,21 +161,21 @@ function AgeGate() {
                 </form>
             </div>
         </div>
-    );
+    )
 }
 
-// === HEADER ===
 function Header() {
-    const [scrolled, setScrolled] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const { cartCount, user, setUser } = useApp();
-    const navigate = useNavigate();
-    const location = useLocation();
+    const [scrolled, setScrolled] = useState(false)
+    const [mobileOpen, setMobileOpen] = useState(false)
+    const [dropdownOpen, setDropdownOpen] = useState(null)
+    const { cartCount, user, setUser } = useApp()
+    const navigate = useNavigate()
+    const location = useLocation()
 
     useEffect(() => {
-        window.addEventListener('scroll', () => setScrolled(window.scrollY > 50));
-        return () => window.removeEventListener('scroll', () => {});
-    }, []);
+        window.addEventListener('scroll', () => setScrolled(window.scrollY > 50))
+        return () => window.removeEventListener('scroll', () => {})
+    }, [])
 
     const navLinks = [
         { href: '/', label: 'Home' },
@@ -190,7 +185,35 @@ function Header() {
         { href: '/delivery', label: 'Delivery' },
         { href: '/blog', label: 'Blog' },
         { href: '/faq', label: 'FAQ' },
-    ];
+    ]
+
+    const dropdownItems = {
+        Shop: [
+            { href: '/shop', label: 'All Products' },
+            { href: '/flower', label: 'Flower' },
+            { href: '/vapes', label: 'Vapes' },
+            { href: '/prerolls', label: 'Pre-Rolls' },
+            { href: '/edibles', label: 'Edibles' },
+            { href: '/concentrates', label: 'Concentrates' },
+            { href: '/tinctures', label: 'Tinctures' },
+            { href: '/topicals', label: 'Topicals' },
+            { href: '/accessories', label: 'Accessories / Merch' },
+        ],
+        Categories: [
+            { href: '/flower', label: 'Flower' },
+            { href: '/vapes', label: 'Vaporizers' },
+            { href: '/prerolls', label: 'Pre-Rolls' },
+            { href: '/edibles', label: 'Edibles' },
+            { href: '/concentrates', label: 'Concentrates' },
+            { href: '/tinctures', label: 'Tinctures' },
+            { href: '/topicals', label: 'Topicals' },
+            { href: '/accessories', label: 'Accessories / Merch' },
+        ],
+        Brands: BRANDS.map(b => ({ href: `/brands#${b.name.toLowerCase().replace(/\s+/g, '-')}`, label: b.name })),
+        About: [{ href: '/about', label: 'About Us' }, { href: '/delivery', label: 'Delivery Info' }],
+        Delivery: [{ href: '/delivery', label: 'Delivery Policy' }, { href: '/faq', label: 'FAQ' }],
+        FAQ: [{ href: '/faq', label: 'Frequently Asked' }],
+    }
 
     return (
         <>
@@ -204,9 +227,27 @@ function Header() {
                         </div>
                     </a>
                     <nav className="nav-desktop">
-                        {navLinks.map(link => (
-                            <a key={link.href} href={link.href} className={location.pathname === link.href ? 'active' : ''}>{link.label}</a>
-                        ))}
+                        {navLinks.map(link => {
+                            const items = dropdownItems[link.label] || []
+                            if (items.length === 0) {
+                                return <a key={link.href} href={link.href} className={location.pathname === link.href ? 'active' : ''}>{link.label}</a>
+                            }
+                            return (
+                                <div key={link.href} className="nav-dropdown"
+                                    onMouseEnter={() => setDropdownOpen(link.label)}
+                                    onMouseLeave={() => setDropdownOpen(null)}>
+                                    <a href={link.href} className={`dropdown-toggle ${location.pathname === link.href ? 'active' : ''}`}
+                                        onClick={(e) => { e.preventDefault(); navigate(link.href); setDropdownOpen(dropdownOpen === link.label ? null : link.label); }}>
+                                        {link.label}
+                                    </a>
+                                    <div className={`dropdown-menu ${dropdownOpen === link.label ? 'active' : ''}`}>
+                                        {items.map(item => (
+                                            <a key={item.href} href={item.href} onClick={() => { navigate(item.href); setDropdownOpen(null); }}>{item.label}</a>
+                                        ))}
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </nav>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <button className="cart-btn" onClick={() => navigate('/cart')}>
@@ -220,10 +261,9 @@ function Header() {
                 </div>
             </header>
         </>
-    );
+    )
 }
 
-// === FOOTER ===
 function Footer() {
     return (
         <footer className="footer">
@@ -257,10 +297,9 @@ function Footer() {
                 </div>
             </div>
         </footer>
-    );
+    )
 }
 
-// === ANNOUNCEMENT BAR ===
 function AnnouncementBar() {
     return (
         <div className="announcement-bar">
@@ -268,17 +307,16 @@ function AnnouncementBar() {
                 🔥 <strong>LIMITED TIME:</strong> 10% OFF first order! Free delivery on orders $75+. 🌿 Lab-tested products. 🚚 Delivery 7 days a week. Call (202) 709-8944.
             </div>
         </div>
-    );
+    )
 }
 
-// === HERO ===
 function Hero() {
-    const { CATEGORIES, CATEGORY_ICONS } = useApp();
+    const { CATEGORIES, CATEGORY_ICONS } = useApp()
     return (
         <section className="hero" id="hero">
+            <AnnouncementBar />
             <div className="container">
                 <div className="hero-content">
-                    <AnnouncementBar />
                     <div className="hero-badge">🚚 Delivery Available • Open 7 Days • 10% Off First Order</div>
                     <h1>DREAMZ <span>DC</span> Dispensary</h1>
                     <p className="lead">Premium flower, pre-rolls, vapes, edibles, and concentrates in Washington DC. Quality you can see, smell, and taste — delivered or ready at the curb.</p>
@@ -295,12 +333,11 @@ function Hero() {
                 </div>
             </div>
         </section>
-    );
+    )
 }
 
-// === CATEGORY SECTION ===
 function CategorySection({ title, icon, products }) {
-    const { CATEGORY_ICONS } = useApp();
+    const { CATEGORY_ICONS } = useApp()
     return (
         <section className="section">
             <div className="container">
@@ -314,12 +351,11 @@ function CategorySection({ title, icon, products }) {
                 </div>
             </div>
         </section>
-    );
+    )
 }
 
-// === PRODUCT CARD — CLICKABLE ===
 function ProductCard({ product }) {
-    const { addToCart } = useApp();
+    const { addToCart } = useApp()
     return (
         <a href={`/product/${product.id}`} className="product-card">
             <div className="product-image">
@@ -336,30 +372,28 @@ function ProductCard({ product }) {
                 </div>
             </div>
         </a>
-    );
+    )
 }
 
-// === HOMEPAGE ===
 function Home() {
-    const { PRODUCTS, CATEGORIES, CATEGORY_ICONS } = useApp();
-    const [showAge, setShowAge] = useState(!localStorage.getItem('dreamz_age_ok'));
-    const [ageVerified, setAgeVerified] = useState(!!localStorage.getItem('dreamz_age_ok'));
+    const { PRODUCTS, CATEGORIES, CATEGORY_ICONS } = useApp()
+    const [showAge, setShowAge] = useState(!localStorage.getItem('dreamz_age_ok'))
+    const [ageVerified, setAgeVerified] = useState(!!localStorage.getItem('dreamz_age_ok'))
 
     const handleAgeVerify = () => {
-        localStorage.setItem('dreamz_age_ok', 'yes');
-        setShowAge(false);
-        setAgeVerified(true);
-    };
+        localStorage.setItem('dreamz_age_ok', 'yes')
+        setShowAge(false)
+        setAgeVerified(true)
+    }
 
     if (showAge && !ageVerified) {
-        return <AgeGate />;
+        return <AgeGate />
     }
 
     return (
         <>
             {showAge && <AgeGate onVerify={handleAgeVerify} />}
             <Hero />
-            {/* Category sections — first 7 products each */}
             <section className="section">
                 <div className="container">
                     <div className="section-header text-center"><h2>SHOP BY CATEGORY</h2></div>
@@ -374,9 +408,9 @@ function Home() {
                 </div>
             </section>
             {CATEGORIES.map((cat, idx) => {
-                const catProducts = PRODUCTS.filter(p => p.category.toLowerCase() === cat.slug).slice(0, 7);
-                if (catProducts.length === 0) return null;
-                return <CategorySection key={cat.slug} title={cat.name} icon={CATEGORY_ICONS[cat.slug]} products={catProducts} />;
+                const catProducts = PRODUCTS.filter(p => p.category.toLowerCase() === cat.slug).slice(0, 7)
+                if (catProducts.length === 0) return null
+                return <CategorySection key={cat.slug} title={cat.name} icon={CATEGORY_ICONS[cat.slug]} products={catProducts} />
             })}
             <section className="section section-alt">
                 <div className="container">
@@ -388,19 +422,18 @@ function Home() {
                 </div>
             </section>
         </>
-    );
+    )
 }
 
-// === SHOP PAGE ===
 function Shop() {
-    const { PRODUCTS, CATEGORIES, CATEGORY_ICONS } = useApp();
-    const [filter, setFilter] = useState('all');
-    const [search, setSearch] = useState('');
+    const { PRODUCTS, CATEGORIES, CATEGORY_ICONS } = useApp()
+    const [filter, setFilter] = useState('all')
+    const [search, setSearch] = useState('')
     const filtered = PRODUCTS.filter(p => {
-        const matchCat = filter === 'all' || p.category.toLowerCase() === filter;
-        const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.brand.toLowerCase().includes(search.toLowerCase());
-        return matchCat && matchSearch;
-    });
+        const matchCat = filter === 'all' || p.category.toLowerCase() === filter
+        const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.brand.toLowerCase().includes(search.toLowerCase())
+        return matchCat && matchSearch
+    })
     return (
         <div>
             <div className="page-hero"><div className="page-container"><h1>Shop</h1><p>Full menu. Add to cart, then checkout for delivery or curbside pickup.</p></div></div>
@@ -422,15 +455,14 @@ function Shop() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === PRODUCT DETAIL PAGE ===
 function ProductPage() {
-    const { PRODUCTS } = useApp();
-    const { id } = useParams();
-    const product = PRODUCTS.find(p => p.id === parseInt(id));
-    if (!product) return <div className="page-container"><h1>Product not found</h1></div>;
+    const { PRODUCTS } = useApp()
+    const { id } = useParams()
+    const product = PRODUCTS.find(p => p.id === parseInt(id))
+    if (!product) return <div className="page-container"><h1>Product not found</h1></div>
     return (
         <div>
             <div className="page-hero"><div className="page-container"><h1>{product.name}</h1></div></div>
@@ -462,12 +494,11 @@ function ProductPage() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === BRANDS PAGE ===
 function Brands() {
-    const { BRANDS } = useApp();
+    const { BRANDS } = useApp()
     return (
         <div>
             <div className="page-hero"><div className="page-container"><h1>Featured Brands</h1><p>House product plus the labels people actually ask for in DC.</p></div></div>
@@ -485,10 +516,9 @@ function Brands() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === ABOUT PAGE ===
 function About() {
     return (
         <div>
@@ -497,53 +527,32 @@ function About() {
                 <div className="container" style={{ display: 'grid', gridTemplateColumns: '1.1fr .9fr', gap: 28, alignItems: 'start' }}>
                     <div>
                         <h2 style={{ marginBottom: 12 }}>The shop</h2>
-                        <p style={{ color: 'var(--text-light)' }}>DREAMZ DC Compound is a Washington DC cannabis dispensary built around lab-tested flower, vapes, edibles, and an in-house DREAMZ COMPOUND line.</p>
-                        <p style={{ color: 'var(--text-light)', marginTop: 12 }}>We keep the menu tight on purpose: recognizable brands, clear potency data, and staff who can point you to the right strain.</p>
+                        <p style={{ marginBottom: 16 }}>DREAMZ DC Compound is Washington DC's premier cannabis dispensary and delivery service. We offer a carefully curated selection of premium flower, vapes, edibles, pre-rolls, concentrates, tinctures, topicals, and accessories — all lab-tested and legally sourced.</p>
+                        <h3 style={{ marginBottom: 8 }}>Our Mission</h3>
+                        <p>We're committed to providing the highest quality cannabis products at fair prices, with exceptional customer service and fast, discreet delivery across the DC metropolitan area.</p>
                     </div>
                     <div>
-                        <img src="/images/storefront.jpg" alt="DREAMZ DC storefront" style={{ borderRadius: 16, marginBottom: 14 }} />
-                        <img src="/images/store inside.jpg" alt="Inside the dispensary" style={{ borderRadius: 16 }} />
+                        <h3 style={{ marginBottom: 12 }}>Business Info</h3>
+                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
+                            <p><strong>Address:</strong> {BUSINESS.address}, {BUSINESS.city}, {BUSINESS.state} {BUSINESS.zip}</p>
+                            <p><strong>Phone:</strong> {BUSINESS.phone}</p>
+                            <p><strong>Email:</strong> {BUSINESS.email}</p>
+                            <h4 style={{ marginTop: 16, marginBottom: 8 }}>Hours</h4>
+                            <ul>
+                                {BUSINESS.hours.map(h => <li key={h.day}><strong>{h.day}:</strong> {h.open} - {h.close}</li>)}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === FAQ PAGE ===
-function FAQ() {
-    const [openIdx, setOpenIdx] = useState(null);
-    const faqs = [
-        { q: 'Where is DREAMZ DC?', a: '611 Pennsylvania Ave SE, 2nd Floor, Washington, DC 20003.' },
-        { q: 'What are the hours?', a: 'Sun–Wed 10AM–12AM. Thu–Sat 10AM–3AM EST.' },
-        { q: 'Do I need a medical card?', a: 'Not if you are 21+. Register for a Visitor Pass at our self-cert portal.' },
-        { q: 'Do you deliver?', a: 'Yes. Choose delivery at checkout. Curbside pickup is the other option.' },
-        { q: 'Are products lab-tested?', a: 'Yes. Menu items include potency and terpene data.' },
-    ];
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>FAQ</h1><p>Hours, self-cert, delivery, and what to expect.</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="faq-list">
-                        {faqs.map((faq, i) => (
-                            <div key={i} className={`faq-item ${openIdx === i ? 'open' : ''}`} onClick={() => setOpenIdx(openIdx === i ? null : i)}>
-                                <div className="faq-question">{faq.q} <i className="fas fa-chevron-down"></i></div>
-                                <div className="faq-answer"><p>{faq.a}</p></div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-        </div>
-    );
-}
-
-// === DELIVERY PAGE ===
 function Delivery() {
     return (
         <div>
-            <div className="page-hero"><div className="page-container"><h1>Delivery & Curbside</h1></div></div>
+            <div className="page-hero"><div className="page-container"><h1>Delivery & Shipping</h1><p>Fast, discreet delivery across Washington DC.</p></div></div>
             <section className="section">
                 <div className="container">
                     <div className="how-it-works">
@@ -554,16 +563,15 @@ function Delivery() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === BLOG PAGE ===
 function Blog() {
     const articles = [
         { id: 1, title: 'How to buy cannabis in Washington, DC', excerpt: 'Self-certification, Visitor Pass, and what to bring.', image: '/images/Code_Generated_Image (12).jpg', tag: 'Guide' },
         { id: 2, title: 'How delivery works at DREAMZ DC', excerpt: 'Order online, we confirm, then a runner is at your door.', image: '/images/storefront.jpg', tag: 'Delivery' },
         { id: 3, title: 'Indica, sativa, hybrid — a practical split', excerpt: 'Use strain type plus terpenes, not just the label.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg', tag: 'Education' },
-    ];
+    ]
     return (
         <div>
             <div className="page-hero"><div className="page-container"><h1>From the blog</h1><p>How buying works in DC, delivery, strains, and shop notes.</p></div></div>
@@ -584,19 +592,18 @@ function Blog() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === BLOG ARTICLE PAGE ===
 function BlogArticle() {
-    const { id } = useParams();
+    const { id } = useParams()
     const articles = [
         { id: 1, title: 'How to buy cannabis in Washington, DC', body: 'Buying cannabis in Washington, DC is straightforward once you know the process. First, you must be 21 or older. Next, complete the self-certification process at the DC Visitor Pass portal (https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39). This gives you instant approval without needing a medical card. Once certified, you can visit any dispensary or order online for delivery. Make sure to bring a valid government-issued photo ID. DC has a vibrant cannabis scene with hundreds of products available, from flower and vapes to edibles and concentrates. Prices vary by brand and potency, but expect to pay $30-75 for premium flower and $45-72 for vapes. Always look for lab-tested products to ensure quality and safety.', image: '/images/Code_Generated_Image (12).jpg' },
-        { id: 2, title: 'How delivery works at DREAMZ DC', excerpt: 'Order online, we confirm, then a runner is at your door.', body: 'Delivery at DREAMZ DC is fast, discreet, and reliable. After placing your order online, our team reviews and confirms your order within minutes. We then dispatch a runner to your verified DC address. Average delivery time is approximately 2 hours across the Washington DC metropolitan area. At checkout, you can choose between home delivery or curbside pickup. All orders require age verification upon delivery — our runner will check your ID before handing over your package. Delivery is available 7 days a week, with Sunday–Wednesday hours from 10AM to midnight and Thursday–Saturday from 10AM to 3AM EST.', image: '/images/storefront.jpg' },
+        { id: 2, title: 'How delivery works at DREAMZ DC', body: 'Delivery at DREAMZ DC is fast, discreet, and reliable. After placing your order online, our team reviews and confirms your order within minutes. We then dispatch a runner to your verified DC address. Average delivery time is approximately 2 hours across the Washington DC metropolitan area. At checkout, you can choose between home delivery or curbside pickup. All orders require age verification upon delivery — our runner will check your ID before handing over your package. Delivery is available 7 days a week, with Sunday–Wednesday hours from 10AM to midnight and Thursday–Saturday from 10AM to 3AM EST.', image: '/images/storefront.jpg' },
         { id: 3, title: 'Indica, sativa, hybrid — a practical split', body: 'Understanding the difference between indica, sativa, and hybrid strains is essential for finding the right cannabis product. Indica strains are known for their relaxing, body-high effects — ideal for evening use, pain relief, and sleep. Sativa strains provide uplifting, cerebral effects — great for daytime use, creativity, and socializing. Hybrids combine both, offering a balanced experience. At DREAMZ DC, we label every product with its strain type and terpene profile so you can make informed decisions. Remember, THC percentage is not the only factor — terpenes play a crucial role in the experience. Our staff can help you navigate the menu based on your preferences and desired effects.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
-    ];
-    const article = articles.find(a => a.id === parseInt(id));
-    if (!article) return <div className="page-container"><h1>Article not found</h1></div>;
+    ]
+    const article = articles.find(a => a.id === parseInt(id))
+    if (!article) return <div className="page-container"><h1>Article not found</h1></div>
     return (
         <div>
             <div className="page-hero"><div className="page-container"><h1>{article.title}</h1></div></div>
@@ -609,31 +616,60 @@ function BlogArticle() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === ADMIN LOGIN ===
+function FAQ() {
+    const faqs = [
+        { q: 'Do I need a medical card?', a: 'No! DC allows adult-use cannabis for anyone 21+ with valid ID. Complete self-certification at our portal.' },
+        { q: 'What forms of payment do you accept?', a: 'We accept cash and debit cards. No credit cards at this time.' },
+        { q: 'How long does delivery take?', a: 'Average delivery time is approximately 2 hours across the DC metro area.' },
+        { q: 'Can I pick up my order?', a: 'Yes! Curbside pickup is available. Just select it at checkout.' },
+        { q: 'What is the age requirement?', a: 'You must be 21 or older with a valid government-issued photo ID.' },
+    ]
+    const [open, setOpen] = useState(null)
+    return (
+        <div>
+            <div className="page-hero"><div className="page-container"><h1>FAQ</h1><p>Common questions about DREAMZ DC.</p></div></div>
+            <section className="section">
+                <div className="container">
+                    <div className="faq-list">
+                        {faqs.map((faq, i) => (
+                            <div key={i} className={`faq-item ${open === i ? 'open' : ''}`}>
+                                <div className="faq-question" onClick={() => setOpen(open === i ? null : i)}>
+                                    {faq.q} <i className="fas fa-chevron-down"></i>
+                                </div>
+                                <div className="faq-answer">{faq.a}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        </div>
+    )
+}
+
 function AdminLogin() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const { setUser, setNotifications } = useApp();
-    const navigate = useNavigate();
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const { setUser, setNotifications } = useApp()
+    const navigate = useNavigate()
 
     const handleLogin = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         if (username === 'admin' && password === 'DREAMZ2026!') {
-            setUser({ name: 'Admin', role: 'admin' });
+            setUser({ name: 'Admin', role: 'admin' })
             setNotifications([
                 { id: 1, type: 'order', message: 'New order #1001 — 3 items, $142.00', time: '2 min ago' },
                 { id: 2, type: 'promo', message: 'Summer Sale: 20% off all flower', time: '1 hr ago' },
                 { id: 3, type: 'lowstock', message: 'Ganjavores Green Crack — only 2 left', time: '3 hrs ago' },
-            ]);
-            navigate('/admin');
+            ])
+            navigate('/admin')
         } else {
-            setError('Invalid credentials');
+            setError('Invalid credentials')
         }
-    };
+    }
 
     return (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1a1a2e, #16213e)' }}>
@@ -655,18 +691,17 @@ function AdminLogin() {
                 <p style={{ textAlign: 'center', marginTop: 16, fontSize: '0.8rem', color: 'var(--text-light)' }}>Credentials: admin / DREAMZ2026!</p>
             </div>
         </div>
-    );
+    )
 }
 
-// === ADMIN DASHBOARD ===
 function AdminDashboard() {
-    const { user, setUser, orders, setOrders, promos, setPromos, notifications, setNotifications } = useApp();
-    const navigate = useNavigate();
-    const [tab, setTab] = useState('overview');
+    const { user, setUser, orders, setOrders, promos, setPromos, notifications, setNotifications } = useApp()
+    const navigate = useNavigate()
+    const [tab, setTab] = useState('overview')
 
-    if (!user) return <AdminLogin />;
+    if (!user) return <AdminLogin />
 
-    const handleLogout = () => { setUser(null); navigate('/admin'); };
+    const handleLogout = () => { setUser(null); navigate('/admin') }
 
     return (
         <div>
@@ -730,13 +765,12 @@ function AdminDashboard() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === CART PAGE ===
 function Cart() {
-    const { cart, cartCount, cartTotal, removeFromCart, updateQty } = useApp();
-    const navigate = useNavigate();
+    const { cart, cartCount, cartTotal, removeFromCart, updateQty } = useApp()
+    const navigate = useNavigate()
     return (
         <div>
             <div className="page-hero"><div className="page-container"><h1>Your Cart</h1><p>{cartCount} items — Total: ${cartTotal.toFixed(2)}</p></div></div>
@@ -770,21 +804,20 @@ function Cart() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === CHECKOUT PAGE ===
 function Checkout() {
-    const { cart, cartTotal } = useApp();
-    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '' });
-    const [orderPlaced, setOrderPlaced] = useState(false);
+    const { cart, cartTotal } = useApp()
+    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '' })
+    const [orderPlaced, setOrderPlaced] = useState(false)
 
-    if (orderPlaced) return <div className="page-container" style={{ textAlign: 'center', padding: 80 }}><h1>Order Placed! ✅</h1><p>Thank you for your order. We'll confirm via email.</p></div>;
+    if (orderPlaced) return <div className="page-container" style={{ textAlign: 'center', padding: 80 }}><h1>Order Placed! ✅</h1><p>Thank you for your order. We'll confirm via email.</p></div>
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        setOrderPlaced(true);
-    };
+        e.preventDefault()
+        setOrderPlaced(true)
+    }
 
     return (
         <div>
@@ -811,16 +844,16 @@ function Checkout() {
                 </div>
             </section>
         </div>
-    );
+    )
 }
 
-// === APP ===
 function AppContent() {
     return (
         <div className="App">
             <AgeGate />
             <Header />
             <main>
+                <AnnouncementBar />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/shop" element={<Shop />} />
@@ -839,7 +872,7 @@ function AppContent() {
             </main>
             <Footer />
         </div>
-    );
+    )
 }
 
 export default function App() {
@@ -849,5 +882,5 @@ export default function App() {
                 <AppContent />
             </BrowserRouter>
         </AppProvider>
-    );
+    )
 }
