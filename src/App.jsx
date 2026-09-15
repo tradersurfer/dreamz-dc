@@ -1,886 +1,733 @@
 import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
-import { Icon } from '@iconify/react'
+import { BrowserRouter, Routes, Route, Navigate, NavLink, Link, useNavigate, useLocation, useParams } from 'react-router-dom'
+import { BUSINESS, CATEGORIES, PRODUCTS, BRANDS, filterProducts } from './data.js'
 import './styles.css'
 
-const BUSINESS = {
-    name: 'DREAMZ DC',
-    displayName: 'DREAMZ DC Compound',
-    tagline: 'Premium Cannabis Dispensary & Delivery',
-    phone: '(202) 709-8944',
-    email: 'info@dreamzdccompound.shop',
-    website: 'https://dreamzdccompound.shop',
-    address: '611 Pennsylvania Ave SE, 2nd Floor',
-    city: 'Washington',
-    state: 'DC',
-    zip: '20003',
-    selfCertUrl: 'https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39',
-    hours: [
-        { day: 'Sunday', open: '10:00 AM', close: '12:00 AM' },
-        { day: 'Monday', open: '10:00 AM', close: '12:00 AM' },
-        { day: 'Tuesday', open: '10:00 AM', close: '12:00 AM' },
-        { day: 'Wednesday', open: '10:00 AM', close: '12:00 AM' },
-        { day: 'Thursday', open: '10:00 AM', close: '3:00 AM' },
-        { day: 'Friday', open: '10:00 AM', close: '3:00 AM' },
-        { day: 'Saturday', open: '10:00 AM', close: '3:00 AM' },
-    ],
-}
-
-const CATEGORIES = [
-    { slug: 'flower', name: 'Flower', icon: 'mdi:cannabis' },
-    { slug: 'preroll', name: 'Pre-Rolls', icon: 'mdi:flower' },
-    { slug: 'cartridge', name: 'Vaporizers', icon: 'mdi:vape' },
-    { slug: 'edibles', name: 'Edibles', icon: 'mdi:pill' },
-    { slug: 'concentrate', name: 'Concentrates', icon: 'mdi:droplet' },
-    { slug: 'topical', name: 'Topicals', icon: 'mdi:band-aid' },
-    { slug: 'tincture', name: 'Tinctures', icon: 'mdi:bottle-tonic-outline' },
-    { slug: 'accessories', name: 'Merch', icon: 'mdi:hat-wizard' },
-]
-
-const BRANDS = [
-    { name: 'DREAMZ COMPOUND', logo: '/images/logo.jpg', blurb: 'Our signature line — flower, vapes, edibles, topicals.' },
-    { name: 'Cookies', logo: '/images/Blueberry Banana by Cookies.jpg', blurb: 'Premium flower and genetics.' },
-    { name: 'Ganjavores', logo: '/images/ganjavores-store.jpg', blurb: 'DC favorite — Green Crack, Sour Diesel.' },
-    { name: 'Jeeter Juice', logo: '/images/Jeeter Juice - Ice Cream Banana (Indica)  - Disposable Straw Vape - 1G - Live Resin.jpg', blurb: 'Premium disposables and vapes.' },
-    { name: 'Muha Meds', logo: '/images/DeVour Gummy Edibles - High Crawlers- 1500mg (10 pc x 150mg ea pc).jpg', blurb: 'Heavy hitter gummies and carts.' },
-    { name: 'Rythm', logo: '/images/OG Kush Breath by Rhythm.jpg', blurb: 'London Poundcake and OG Kush Breath.' },
-    { name: 'Cultivation Labs', logo: '/images/Jenny Kush by Cultivation Labs - Top Shelf Whole Flower.jpg', blurb: 'Jenny Kush and premium genetics.' },
-    { name: 'Jungle Boys', logo: '/images/Gelato 33 by Jungle Boys - Premium Flower.jpg', blurb: 'Gelato 33 and premium strains.' },
-    { name: 'BackpackBoyz', logo: '/images/BackPackBoyz Lemon & Cherriez disposable vape, 2g, All-In-One, Live Resin, Melted Diamonds.jpg', blurb: 'Lemon & Cherriez disposables.' },
-    { name: 'Trulieve', logo: '/images/Cultivar Collection by Trulieve - Bubble Gum Kush - Premium Whole Flower.jpg', blurb: 'Bubble Gum Kush and more.' },
-]
-
-const PRODUCTS = [
-    { id: 1, name: 'DREAMZ Compound Flower', brand: 'DREAMZ COMPOUND', category: 'Flower', type: 'flower', strain: 'Hybrid', thc: '27%', terps: '2.5%', price: 54.00, oldPrice: 58.00, badge: 'sale', description: 'Premium DREAMZ Compound flower — a balanced hybrid with rich terpene profile. Perfect for any occasion. Lab-tested, high potency.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
-    { id: 2, name: 'DREAMZ Vape Cartridge', brand: 'DREAMZ COMPOUND', category: 'Vapes', type: 'cartridge', strain: 'Indica', thc: '76%', terps: '2.9%', price: 72.00, oldPrice: null, badge: 'new', description: 'DREAMZ Vape Cartridge 1g — high-purity distillate with natural terpenes. Smooth, potent, and reliable.', image: '/images/storefront.jpg' },
-    { id: 3, name: 'DREAMZ Gummies 1000mg', brand: 'DREAMZ COMPOUND', category: 'Edibles', type: 'edibles', strain: 'Hybrid', thc: '~85-90%', terps: 'N/A', price: 60.00, oldPrice: 75.00, badge: 'sale', description: 'DREAMZ Gummies 1000mg — delicious gummies with 1000mg total THC. Perfect for experienced users.', image: '/images/DeVour Gummy Edibles - Watermelon Slices - 1500mg (150mg ea pc).jpg' },
-    { id: 4, name: 'Ganjavores Green Crack', brand: 'Ganjavores', category: 'Flower', type: 'flower', strain: 'Sativa', thc: '24%', terps: '<1%', price: 45.00, oldPrice: null, badge: null, description: 'Ganjavores Green Crack — uplifting sativa with earthy diesel notes. Perfect for daytime use.', image: '/images/Green Crack by Ganjavores - Premium Flower.jpg' },
-    { id: 5, name: 'Ganjavores Sour Diesel', brand: 'Ganjavores', category: 'Flower', type: 'flower', strain: 'Sativa', thc: '26%', terps: '<1%', price: 45.00, oldPrice: null, badge: null, description: 'Ganjavores Sour Diesel — classic NYC diesel strain. Energizing and flavorful.', image: '/images/Sour Diesel by Ganjavores - Hybrid - 3.5G Jars - Top Shelf Whole Flower.jpg' },
-    { id: 6, name: 'DREAMZ Pre-Roll Pack', brand: 'DREAMZ COMPOUND', category: 'Pre-Rolls', type: 'preroll', strain: 'Hybrid', thc: '25-28%', terps: '2.5%', price: 18.00, oldPrice: 16.20, badge: 'sale', description: 'DREAMZ Pre-Roll Pack — premium pre-rolls with our signature blend.', image: '/images/bulk-flower.jpg' },
-    { id: 7, name: 'DREAMZ Concentrates', brand: 'DREAMZ COMPOUND', category: 'Concentrates', type: 'cartridge', strain: 'Hybrid', thc: '71-88%', terps: '3.6%', price: 72.00, oldPrice: null, badge: null, description: 'DREAMZ Concentrates — potent extracts with 71-88% THC. For experienced users.', image: '/images/storefront.jpg' },
-    { id: 8, name: 'DREAMZ Edibles Sampler', brand: 'DREAMZ COMPOUND', category: 'Edibles', type: 'edibles', strain: 'Mixed', thc: '1500mg', terps: 'N/A', price: 65.00, oldPrice: null, badge: 'new', description: 'DREAMZ Edibles Sampler — variety pack of our best gummies and chocolates.', image: '/images/DeVour Gummy Edibles - High Crawlers- 1500mg (10 pc x 150mg ea pc).jpg' },
-    { id: 9, name: 'Jeeter Juice Ice Cream Banana', brand: 'Jeeter Juice', category: 'Vapes', type: 'cartridge', strain: 'Indica', thc: '70%+', terps: 'N/A', price: 50.00, oldPrice: null, badge: null, description: 'Jeeter Juice Ice Cream Banana — 1G disposable with classic Banana strain.', image: '/images/Jeeter Juice - Ice Cream Banana (Indica)  - Disposable Straw Vape - 1G - Live Resin.jpg' },
-    { id: 10, name: 'Jeeter Juice Wedding Cake', brand: 'Jeeter Juice', category: 'Vapes', type: 'cartridge', strain: 'Hybrid', thc: '70%+', terps: 'N/A', price: 50.00, oldPrice: null, badge: null, description: 'Jeeter Juice Wedding Cake — 1G disposable with sweet Wedding Cake strain.', image: '/images/Jeeter Juice - Wedding Cake (Hybrid) - Disposable Straw Vape - 1G - Live Resin.jpg' },
-    { id: 11, name: 'Cookies Blueberry Banana', brand: 'Cookies', category: 'Flower', type: 'flower', strain: 'Hybrid', thc: '28%', terps: '2.0%', price: 55.00, oldPrice: null, badge: null, description: 'Cookies Blueberry Banana — award-winning hybrid with sweet berry flavors.', image: '/images/Blueberry Banana by Cookies.jpg' },
-    { id: 12, name: 'Rythm London Poundcake', brand: 'Rythm', category: 'Flower', type: 'flower', strain: 'Hybrid', thc: '30%', terps: '2.2%', price: 50.00, oldPrice: null, badge: null, description: 'Rythm London Poundcake — 7G jar of premium hybrid with sweet vanilla notes.', image: '/images/London Poundcake (Hybrid) by Rythm - 7G Jars - Premium Whole Flower.jpg' },
-    { id: 13, name: 'Cultivation Labs Jenny Kush', brand: 'Cultivation Labs', category: 'Flower', type: 'flower', strain: 'Indica', thc: '26%', terps: '1.8%', price: 48.00, oldPrice: null, badge: null, description: 'Cultivation Labs Jenny Kush — premium indica with relaxing effects.', image: '/images/Jenny Kush by Cultivation Labs - Top Shelf Whole Flower.jpg' },
-    { id: 14, name: 'Jungle Boys Gelato 33', brand: 'Jungle Boys', category: 'Flower', type: 'flower', strain: 'Hybrid', thc: '27%', terps: '2.4%', price: 52.00, oldPrice: null, badge: null, description: 'Jungle Boys Gelato 33 — sweet and creamy hybrid with relaxing effects.', image: '/images/Gelato 33 by Jungle Boys - Premium Flower.jpg' },
-    { id: 15, name: 'BackpackBoyz Lemon & Cherriez', brand: 'BackpackBoyz', category: 'Vapes', type: 'cartridge', strain: 'Hybrid', thc: '80%+', terps: 'N/A', price: 55.00, oldPrice: null, badge: null, description: 'BackpackBoyz Lemon & Cherriez — 2G disposable with citrus and cherry flavors.', image: '/images/BackPackBoyz Lemon & Cherriez disposable vape, 2g, All-In-One, Live Resin, Melted Diamonds.jpg' },
-    { id: 16, name: 'Muha Meds Gummies', brand: 'Muha Meds', category: 'Edibles', type: 'edibles', strain: 'Mixed', thc: '1000mg', terps: 'N/A', price: 55.00, oldPrice: null, badge: null, description: 'Muha Meds Gummies — 1000mg gummies with tropical fruit flavors.', image: '/images/DeVour Gummy Edibles - Watermelon Slices - 1500mg (150mg ea pc).jpg' },
-    { id: 17, name: 'OG Kush Breath', brand: 'DREAMZ COMPOUND', category: 'Flower', type: 'flower', strain: 'Indica', thc: '28%', terps: '2.8%', price: 55.00, oldPrice: null, badge: null, description: 'OG Kush Breath [OGKB 2.1] by DREAMZ — powerful indica with earthy OG flavor.', image: '/images/OG Kush Breath [OGKB 2.1] by DREAMZ - Premium Whole Flower.jpg' },
-    { id: 18, name: 'DREAMZ Topicals', brand: 'DREAMZ COMPOUND', category: 'Topicals', type: 'topical', strain: 'Balanced', thc: '<1%', terps: 'N/A', price: 35.00, oldPrice: null, badge: null, description: 'DREAMZ Topicals — CBD-infused balms and lotions for localized relief.', image: '/images/bulk-flower.jpg' },
-    { id: 19, name: 'DREAMZ Tincture', brand: 'DREAMZ COMPOUND', category: 'Tinctures', type: 'tincture', strain: 'Hybrid', thc: '1000mg', terps: 'N/A', price: 55.00, oldPrice: null, badge: null, description: 'DREAMZ Tincture — fast-acting liquid extract with 1000mg THC.', image: '/images/bulk-flower.jpg' },
-    { id: 20, name: 'Trulieve Bubble Gum Kush', brand: 'Trulieve', category: 'Flower', type: 'flower', strain: 'Indica', thc: '25%', terps: '1.5%', price: 45.00, oldPrice: null, badge: null, description: 'Cultivar Collection by Trulieve — Bubble Gum Kush with sweet berry flavor.', image: '/images/Cultivar Collection by Trulieve - Bubble Gum Kush - Premium Whole Flower.jpg' },
-]
-
-const CATEGORY_ICONS = {
-    flower: 'mdi:cannabis',
-    preroll: 'mdi:flower',
-    cartridge: 'mdi:vape',
-    edibles: 'mdi:pill',
-    concentrate: 'mdi:droplet',
-    topical: 'mdi:band-aid',
-    tincture: 'mdi:bottle-tonic-outline',
-    accessories: 'mdi:hat-wizard',
-}
-
-const AppContext = createContext()
+const AppContext = createContext(null)
+const useApp = () => useContext(AppContext)
 
 function AppProvider({ children }) {
-    const [cart, setCart] = useState([])
-    const [ageVerified, setAgeVerified] = useState(false)
-    const [user, setUser] = useState(null)
-    const [orders, setOrders] = useState([])
-    const [promos, setPromos] = useState([])
-    const [notifications, setNotifications] = useState([])
-
-    const addToCart = useCallback((product) => {
-        setCart(prev => {
-            const existing = prev.find(item => item.id === product.id)
-            if (existing) return prev.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item)
-            return [...prev, { ...product, qty: 1 }]
-        })
-    }, [])
-
-    const removeFromCart = useCallback((productId) => {
-        setCart(prev => prev.filter(item => item.id !== productId))
-    }, [])
-
-    const updateQty = useCallback((productId, qty) => {
-        if (qty <= 0) { removeFromCart(productId); return }
-        setCart(prev => prev.map(item => item.id === productId ? { ...item, qty } : item))
-    }, [removeFromCart])
-
-    const cartCount = cart.reduce((s, i) => s + i.qty, 0)
-    const cartTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0)
-
-    const value = useMemo(() => ({
-        BUSINESS, CATEGORIES, BRANDS, PRODUCTS, CATEGORY_ICONS,
-        cart, cartCount, cartTotal, addToCart, removeFromCart, updateQty,
-        ageVerified, setAgeVerified, user, setUser,
-        orders, setOrders, promos, setPromos, notifications, setNotifications,
-    }), [cart, cartCount, cartTotal, addToCart, removeFromCart, updateQty, ageVerified, user, orders, promos, notifications])
-
-    return <AppContext.Provider value={value}>{children}</AppContext.Provider>
+  const [cart, setCart] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dreamz_cart') || '[]') } catch { return [] }
+  })
+  const [user, setUser] = useState(null)
+  const [orders, setOrders] = useState([])
+  const [toast, setToast] = useState('')
+  useEffect(() => { localStorage.setItem('dreamz_cart', JSON.stringify(cart)) }, [cart])
+  const addToCart = useCallback((product) => {
+    setCart((prev) => {
+      const existing = prev.find((i) => i.id === product.id)
+      if (existing) return prev.map((i) => i.id === product.id ? { ...i, qty: i.qty + 1 } : i)
+      return [...prev, { ...product, qty: 1 }]
+    })
+    setToast(`${product.name} added to cart`)
+    setTimeout(() => setToast(''), 1800)
+  }, [])
+  const removeFromCart = useCallback((id) => setCart((prev) => prev.filter((i) => i.id !== id)), [])
+  const updateQty = useCallback((id, qty) => {
+    if (qty <= 0) return removeFromCart(id)
+    setCart((prev) => prev.map((i) => i.id === id ? { ...i, qty } : i))
+  }, [removeFromCart])
+  const clearCart = useCallback(() => setCart([]), [])
+  const cartCount = cart.reduce((s, i) => s + i.qty, 0)
+  const cartTotal = cart.reduce((s, i) => s + i.price * i.qty, 0)
+  const value = useMemo(() => ({
+    cart, cartCount, cartTotal, addToCart, removeFromCart, updateQty, clearCart, user, setUser, orders, setOrders, toast,
+  }), [cart, cartCount, cartTotal, addToCart, removeFromCart, updateQty, clearCart, user, orders, toast])
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
-
-function useApp() { return useContext(AppContext) }
 
 function AgeGate() {
-    const [show, setShow] = useState(!localStorage.getItem('dreamz_age_ok'))
-    const [dob, setDob] = useState('')
-    const [error, setError] = useState('')
-    const { setAgeVerified } = useApp()
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        if (!dob) { setError('Please enter your date of birth'); return }
-        const birth = new Date(dob)
-        const today = new Date()
-        let age = today.getFullYear() - birth.getFullYear()
-        const monthDiff = today.getMonth() - birth.getMonth()
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--
-        if (age < 21) { setError('You must be 21 or older'); return }
-        localStorage.setItem('dreamz_age_ok', 'yes')
-        setShow(false)
-        setAgeVerified(true)
-    }
-
-    if (!show) return null
-    return (
-        <div className="age-gate-overlay">
-            <div className="age-gate-box">
-                <h2>🚬 21+ Only</h2>
-                <p>This website contains adult content. You must be 21 or older to enter.</p>
-                <form onSubmit={handleSubmit}>
-                    <input type="date" value={dob} onChange={e => setDob(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: 'none', marginBottom: '12px', width: '100%', maxWidth: '300px' }} />
-                    <br />
-                    {error && <p style={{ color: 'var(--accent-glow)', marginBottom: '8px', fontSize: '0.85rem' }}>{error}</p>}
-                    <button type="submit" className="age-gate-btn">Enter</button>
-                    <button type="button" className="age-gate-btn secondary" onClick={() => window.close()}>Leave</button>
-                </form>
-            </div>
-        </div>
-    )
-}
-
-function Header() {
-    const [scrolled, setScrolled] = useState(false)
-    const [mobileOpen, setMobileOpen] = useState(false)
-    const [dropdownOpen, setDropdownOpen] = useState(null)
-    const { cartCount, user, setUser } = useApp()
-    const navigate = useNavigate()
-    const location = useLocation()
-
-    useEffect(() => {
-        window.addEventListener('scroll', () => setScrolled(window.scrollY > 50))
-        return () => window.removeEventListener('scroll', () => {})
-    }, [])
-
-    const navLinks = [
-        { href: '/', label: 'Home' },
-        { href: '/shop', label: 'Shop' },
-        { href: '/brands', label: 'Brands' },
-        { href: '/about', label: 'About' },
-        { href: '/delivery', label: 'Delivery' },
-        { href: '/blog', label: 'Blog' },
-        { href: '/faq', label: 'FAQ' },
-    ]
-
-    const dropdownItems = {
-        Shop: [
-            { href: '/shop', label: 'All Products' },
-            { href: '/flower', label: 'Flower' },
-            { href: '/vapes', label: 'Vapes' },
-            { href: '/prerolls', label: 'Pre-Rolls' },
-            { href: '/edibles', label: 'Edibles' },
-            { href: '/concentrates', label: 'Concentrates' },
-            { href: '/tinctures', label: 'Tinctures' },
-            { href: '/topicals', label: 'Topicals' },
-            { href: '/accessories', label: 'Accessories / Merch' },
-        ],
-        Categories: [
-            { href: '/flower', label: 'Flower' },
-            { href: '/vapes', label: 'Vaporizers' },
-            { href: '/prerolls', label: 'Pre-Rolls' },
-            { href: '/edibles', label: 'Edibles' },
-            { href: '/concentrates', label: 'Concentrates' },
-            { href: '/tinctures', label: 'Tinctures' },
-            { href: '/topicals', label: 'Topicals' },
-            { href: '/accessories', label: 'Accessories / Merch' },
-        ],
-        Brands: BRANDS.map(b => ({ href: `/brands#${b.name.toLowerCase().replace(/\s+/g, '-')}`, label: b.name })),
-        About: [{ href: '/about', label: 'About Us' }, { href: '/delivery', label: 'Delivery Info' }],
-        Delivery: [{ href: '/delivery', label: 'Delivery Policy' }, { href: '/faq', label: 'FAQ' }],
-        FAQ: [{ href: '/faq', label: 'Frequently Asked' }],
-    }
-
-    return (
-        <>
-            <header className={scrolled ? 'header scrolled' : 'header'}>
-                <div className="container">
-                    <a href="/" className="logo" onClick={() => navigate('/')}>
-                        <img src="/images/logo.jpg" alt="DREAMZ DC" />
-                        <div>
-                            <div className="logo-text">DREAMZ DC</div>
-                            <div className="logo-sub">Premium Dispensary</div>
-                        </div>
-                    </a>
-                    <nav className="nav-desktop">
-                        {navLinks.map(link => {
-                            const items = dropdownItems[link.label] || []
-                            if (items.length === 0) {
-                                return <a key={link.href} href={link.href} className={location.pathname === link.href ? 'active' : ''}>{link.label}</a>
-                            }
-                            return (
-                                <div key={link.href} className="nav-dropdown"
-                                    onMouseEnter={() => setDropdownOpen(link.label)}
-                                    onMouseLeave={() => setDropdownOpen(null)}>
-                                    <a href={link.href} className={`dropdown-toggle ${location.pathname === link.href ? 'active' : ''}`}
-                                        onClick={(e) => { e.preventDefault(); navigate(link.href); setDropdownOpen(dropdownOpen === link.label ? null : link.label); }}>
-                                        {link.label}
-                                    </a>
-                                    <div className={`dropdown-menu ${dropdownOpen === link.label ? 'active' : ''}`}>
-                                        {items.map(item => (
-                                            <a key={item.href} href={item.href} onClick={() => { navigate(item.href); setDropdownOpen(null); }}>{item.label}</a>
-                                        ))}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </nav>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <button className="cart-btn" onClick={() => navigate('/cart')}>
-                            <i className="fas fa-shopping-bag"></i> Cart
-                            <span className="cart-count">{cartCount}</span>
-                        </button>
-                        <button className="mobile-close" onClick={() => setMobileOpen(!mobileOpen)} style={{ display: 'none' }}>
-                            <i className="fas fa-bars"></i>
-                        </button>
-                    </div>
-                </div>
-            </header>
-        </>
-    )
-}
-
-function Footer() {
-    return (
-        <footer className="footer">
-            <div className="container">
-                <div className="footer-grid">
-                    <div>
-                        <img src="/images/logo.jpg" alt="DREAMZ DC Logo" style={{ height: 40, marginBottom: 16 }} />
-                        <h3>DREAMZ DC Compound</h3>
-                        <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: 16 }}>Washington DC's premier cannabis dispensary & delivery service.</p>
-                        <div style={{ display: 'flex', gap: 12 }}>
-                            <a href="#" style={{ color: '#888', fontSize: '1.2rem' }}><i className="fab fa-instagram"></i></a>
-                            <a href="#" style={{ color: '#888', fontSize: '1.2rem' }}><i className="fab fa-x-twitter"></i></a>
-                            <a href="#" style={{ color: '#888', fontSize: '1.2rem' }}><i className="fab fa-facebook"></i></a>
-                        </div>
-                    </div>
-                    <div>
-                        <h3>SITE</h3>
-                        <ul><li><a href="/shop">Shop</a></li><li><a href="/brands">Brands</a></li><li><a href="/about">About</a></li><li><a href="/delivery">Delivery</a></li></ul>
-                    </div>
-                    <div>
-                        <h3>RESOURCES</h3>
-                        <ul><li><a href="/faq">FAQ</a></li><li><a href="/blog">Blog</a></li><li><a href={BUSINESS.selfCertUrl}>Self-Certify</a></li></ul>
-                    </div>
-                    <div>
-                        <h3>CONTACT</h3>
-                        <ul><li><a href={`tel:${BUSINESS.phone}`}>{BUSINESS.phone}</a></li><li><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></li></ul>
-                    </div>
-                </div>
-                <div className="footer-bottom">
-                    <p>&copy; 2026 DREAMZ DC Compound. All rights reserved.</p>
-                </div>
-            </div>
-        </footer>
-    )
+  const [show, setShow] = useState(() => !localStorage.getItem('dreamz_age_ok'))
+  const [dob, setDob] = useState('')
+  const [error, setError] = useState('')
+  if (!show) return null
+  const submit = (e) => {
+    e.preventDefault()
+    if (!dob) { setError('Enter your date of birth'); return }
+    const birth = new Date(dob)
+    const today = new Date()
+    let age = today.getFullYear() - birth.getFullYear()
+    const md = today.getMonth() - birth.getMonth()
+    if (md < 0 || (md === 0 && today.getDate() < birth.getDate())) age--
+    if (age < 21) { setError('You must be 21 or older'); return }
+    localStorage.setItem('dreamz_age_ok', 'yes')
+    setShow(false)
+  }
+  return (
+    <div className="age-gate-overlay">
+      <div className="age-gate-box">
+        <h2>21+ only</h2>
+        <p>DREAMZ DC Compound sells cannabis to adults 21 and over in Washington, DC.</p>
+        <form onSubmit={submit}>
+          <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
+          {error && <p className="gate-error">{error}</p>}
+          <div className="gate-actions">
+            <button type="submit" className="age-gate-btn">I am 21+</button>
+            <a className="age-gate-btn secondary" href="https://www.google.com">Leave</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }
 
 function AnnouncementBar() {
-    return (
-        <div className="announcement-bar">
-            <div className="announcement-content">
-                🔥 <strong>LIMITED TIME:</strong> 10% OFF first order! Free delivery on orders $75+. 🌿 Lab-tested products. 🚚 Delivery 7 days a week. Call (202) 709-8944.
-            </div>
+  const text = BUSINESS.announcements.join('   ·   ')
+  return (
+    <div className="announcement-bar" role="status">
+      <div className="announcement-track">
+        <span>{text}</span>
+        <span aria-hidden="true">{text}</span>
+      </div>
+    </div>
+  )
+}
+
+const SHOP_DROPDOWN = [
+  { to: '/shop', label: 'All Products' },
+  { to: '/flower', label: 'Flower' },
+  { to: '/flower/whole-flower', label: 'Whole Flower' },
+  { to: '/flower/shake', label: 'Shake' },
+  { to: '/flower/small-buds', label: 'Small Buds' },
+  { to: '/vapes', label: 'Vapes' },
+  { to: '/vapes/disposables', label: 'Disposable Vapes' },
+  { to: '/vapes/510-cartridges', label: '510 Cartridges' },
+  { to: '/prerolls', label: 'Pre-Rolls' },
+  { to: '/edibles', label: 'Edibles' },
+]
+const CATEGORY_DROPDOWN = [
+  { to: '/categories', label: 'All Categories' },
+  { to: '/flower', label: 'Flower' },
+  { to: '/flower/whole-flower/premium', label: 'Premium Flower ($40–45)' },
+  { to: '/flower/whole-flower/top-shelf', label: 'Top Shelf ($50–55)' },
+  { to: '/flower/whole-flower/exclusives', label: 'Exclusives ($60+)' },
+  { to: '/vapes/disposables', label: 'Disposable Vapes' },
+  { to: '/vapes/510-cartridges', label: '510 Cartridges' },
+  { to: '/prerolls', label: 'Pre-Rolls' },
+  { to: '/edibles', label: 'Edibles' },
+  { to: '/concentrates', label: 'Concentrates' },
+  { to: '/tinctures', label: 'Tinctures' },
+  { to: '/topicals', label: 'Topicals' },
+  { to: '/accessories', label: 'Accessories' },
+  { to: '/merch', label: 'Merch' },
+]
+const BRAND_DROPDOWN = BRANDS.map((b) => ({ to: `/brands/${b.name.toLowerCase().replace(/\s+/g, '-')}`, label: b.name }))
+
+function Dropdown({ label, to, items }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className={`nav-dropdown ${open ? 'open' : ''}`} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <NavLink to={to} className={({ isActive }) => `dropdown-toggle ${isActive ? 'active' : ''}`} onClick={() => setOpen(false)}>
+        {label} <span className="caret">▾</span>
+      </NavLink>
+      <div className="dropdown-menu">
+        {items.map((item) => (
+          <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)}>{item.label}</NavLink>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function Header() {
+  const { cartCount } = useApp()
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const location = useLocation()
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  useEffect(() => { setMobileOpen(false) }, [location.pathname])
+  return (
+    <header className={scrolled ? 'header scrolled' : 'header'}>
+      <div className="container header-row">
+        <Link to="/" className="logo">
+          <img src="/images/logo.jpg" alt="DREAMZ DC Compound" />
+          <div>
+            <div className="logo-text">DREAMZ DC</div>
+            <div className="logo-sub">Compound · Dispensary</div>
+          </div>
+        </Link>
+        <nav className="nav-desktop" aria-label="Primary">
+          <Dropdown label="Shop" to="/shop" items={SHOP_DROPDOWN} />
+          <Dropdown label="Categories" to="/categories" items={CATEGORY_DROPDOWN} />
+          <Dropdown label="Brands" to="/brands" items={[{ to: '/brands', label: 'All Brands' }, ...BRAND_DROPDOWN]} />
+          <NavLink to="/about">About</NavLink>
+          <NavLink to="/delivery">Delivery</NavLink>
+          <NavLink to="/faq">FAQ</NavLink>
+          <NavLink to="/blog">Blog</NavLink>
+          <NavLink to="/med-reg">Med Reg</NavLink>
+        </nav>
+        <div className="header-actions">
+          <Link className="cart-btn" to="/cart">Cart<span className="cart-count">{cartCount}</span></Link>
+          <button className="burger" aria-label="Open menu" onClick={() => setMobileOpen((v) => !v)}>{mobileOpen ? '✕' : '☰'}</button>
         </div>
-    )
+      </div>
+      {mobileOpen && (
+        <div className="mobile-panel">
+          <Link to="/shop">Shop — All</Link>
+          {CATEGORY_DROPDOWN.map((i) => <Link key={i.to} to={i.to}>{i.label}</Link>)}
+          <Link to="/brands">Brands</Link>
+          <Link to="/about">About</Link>
+          <Link to="/delivery">Delivery</Link>
+          <Link to="/faq">FAQ</Link>
+          <Link to="/blog">Blog</Link>
+          <Link to="/med-reg">Med Reg</Link>
+          <Link to="/cart">Cart ({cartCount})</Link>
+        </div>
+      )}
+    </header>
+  )
 }
 
-function Hero() {
-    const { CATEGORIES, CATEGORY_ICONS } = useApp()
-    return (
-        <section className="hero" id="hero">
-            <AnnouncementBar />
-            <div className="container">
-                <div className="hero-content">
-                    <div className="hero-badge">🚚 Delivery Available • Open 7 Days • 10% Off First Order</div>
-                    <h1>DREAMZ <span>DC</span> Dispensary</h1>
-                    <p className="lead">Premium flower, pre-rolls, vapes, edibles, and concentrates in Washington DC. Quality you can see, smell, and taste — delivered or ready at the curb.</p>
-                    <div className="hero-buttons">
-                        <a className="btn-primary" href="/shop"><i className="fas fa-shopping-bag"></i> Shop Menu</a>
-                        <a className="btn-secondary" href={BUSINESS.selfCertUrl} target="_blank" rel="noopener"><i className="fas fa-id-card"></i> Self-Certify</a>
-                    </div>
-                    <div className="hero-stats">
-                        <div className="hero-stat"><strong>7 Days</strong><span>Open This Week</span></div>
-                        <div className="hero-stat"><strong>~2 hrs</strong><span>Avg Delivery</span></div>
-                        <div className="hero-stat"><strong>30+</strong><span>Menu Items</span></div>
-                        <div className="hero-stat"><strong>100%</strong><span>Lab Tested</span></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    )
+function Footer() {
+  return (
+    <footer className="footer">
+      <div className="container footer-grid">
+        <div>
+          <img src="/images/logo.jpg" alt="" className="footer-logo" />
+          <h3>DREAMZ DC Compound</h3>
+          <p>{BUSINESS.address}<br />{BUSINESS.city}, {BUSINESS.state} {BUSINESS.zip}</p>
+          <p><a href={`tel:${BUSINESS.phone}`}>{BUSINESS.phone}</a><br /><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></p>
+        </div>
+        <div>
+          <h3>Shop</h3>
+          <ul>
+            <li><Link to="/flower">Flower</Link></li>
+            <li><Link to="/vapes">Vapes</Link></li>
+            <li><Link to="/prerolls">Pre-Rolls</Link></li>
+            <li><Link to="/edibles">Edibles</Link></li>
+            <li><Link to="/shop">Full menu</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Info</h3>
+          <ul>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/delivery">Delivery</Link></li>
+            <li><Link to="/faq">FAQ</Link></li>
+            <li><Link to="/blog">Blog</Link></li>
+            <li><Link to="/med-reg">Self-certify</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Hours</h3>
+          <ul>{BUSINESS.hours.map((h) => <li key={h.day}><strong>{h.day.slice(0, 3)}</strong> {h.open}–{h.close}</li>)}</ul>
+        </div>
+      </div>
+      <div className="footer-bottom">© 2026 DREAMZ DC Compound. 21+ only.</div>
+    </footer>
+  )
 }
 
-function CategorySection({ title, icon, products }) {
-    const { CATEGORY_ICONS } = useApp()
-    return (
-        <section className="section">
-            <div className="container">
-                <div className="section-header">
-                    <h2><Icon icon={icon || CATEGORY_ICONS[products[0]?.category?.toLowerCase()] || 'mdi:cannabis'} style={{ marginRight: 8 }} />{title}</h2>
-                </div>
-                <div className="products-grid">
-                    {products.map(product => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
-            </div>
-        </section>
-    )
+function ProductImage({ src, alt }) {
+  const [bad, setBad] = useState(false)
+  return <img src={bad || !src ? '/images/storefront.jpg' : src} alt={alt} onError={() => setBad(true)} />
 }
 
 function ProductCard({ product }) {
-    const { addToCart } = useApp()
-    return (
-        <a href={`/product/${product.id}`} className="product-card">
-            <div className="product-image">
-                <img src={product.image} alt={product.name} />
-                {product.badge && <span className={`product-badge badge-${product.badge}`}>{product.badge}</span>}
-            </div>
-            <div className="product-info">
-                <div className="product-brand">{product.brand}</div>
-                <div className="product-name">{product.name}</div>
-                <div className="product-details">{product.strain} • {product.thc} • {product.terps !== 'N/A' ? `${product.terps} terpenes` : ''}</div>
-                <div className="product-price">
-                    <span className="price">${product.price}{product.oldPrice && <span className="price-old">${product.oldPrice}</span>}</span>
-                    <button className="add-cart" onClick={(e) => { e.preventDefault(); addToCart(product); }}>ADD</button>
-                </div>
-            </div>
-        </a>
-    )
+  const { addToCart } = useApp()
+  return (
+    <article className="product-card">
+      <Link to={`/product/${product.id}`} className="product-card-link">
+        <div className="product-image">
+          <ProductImage src={product.image} alt={product.name} />
+          {product.badge && <span className={`product-badge badge-${product.badge}`}>{product.badge}</span>}
+        </div>
+        <div className="product-info">
+          <div className="product-brand">{product.brand}</div>
+          <h3 className="product-name">{product.name}</h3>
+          <div className="product-details">{product.strain}{product.thc && product.thc !== '—' ? ` · THC ${product.thc}` : ''}{product.weight ? ` · ${product.weight}` : ''}</div>
+        </div>
+      </Link>
+      <div className="product-price">
+        <span className="price">${product.price.toFixed(2)}{product.oldPrice && <span className="price-old">${product.oldPrice.toFixed(2)}</span>}</span>
+        <button className="add-cart" type="button" onClick={() => addToCart(product)}>ADD</button>
+      </div>
+    </article>
+  )
+}
+
+function PageHero({ title, sub }) {
+  return <div className="page-hero"><div className="page-container"><h1>{title}</h1>{sub && <p>{sub}</p>}</div></div>
+}
+
+function Hero() {
+  return (
+    <section className="hero">
+      <div className="container hero-content">
+        <div className="hero-badge">Delivery available · Open 7 days · 10% off first order</div>
+        <h1>DREAMZ DC <span>Dispensary</span></h1>
+        <p className="lead">Premium cannabis flower, pre-rolls, vapes, edibles, and concentrates delivered to your door in Washington DC — or ready at the curb.</p>
+        <div className="hero-buttons">
+          <Link className="btn-primary" to="/shop">Shop menu</Link>
+          <Link className="btn-secondary" to="/delivery">Order delivery</Link>
+        </div>
+        <div className="hero-stats">
+          <div className="hero-stat"><strong>7 days</strong><span>Open this week</span></div>
+          <div className="hero-stat"><strong>~2 hrs</strong><span>Avg delivery</span></div>
+          <div className="hero-stat"><strong>{PRODUCTS.length}+</strong><span>Menu items</span></div>
+          <div className="hero-stat"><strong>100%</strong><span>Lab tested</span></div>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 function Home() {
-    const { PRODUCTS, CATEGORIES, CATEGORY_ICONS } = useApp()
-    const [showAge, setShowAge] = useState(!localStorage.getItem('dreamz_age_ok'))
-    const [ageVerified, setAgeVerified] = useState(!!localStorage.getItem('dreamz_age_ok'))
-
-    const handleAgeVerify = () => {
-        localStorage.setItem('dreamz_age_ok', 'yes')
-        setShowAge(false)
-        setAgeVerified(true)
-    }
-
-    if (showAge && !ageVerified) {
-        return <AgeGate />
-    }
-
-    return (
-        <>
-            {showAge && <AgeGate onVerify={handleAgeVerify} />}
-            <Hero />
-            <section className="section">
-                <div className="container">
-                    <div className="section-header text-center"><h2>SHOP BY CATEGORY</h2></div>
-                    <div className="categories-grid">
-                        {CATEGORIES.map(cat => (
-                            <a key={cat.slug} href={`/shop#${cat.slug}`} className="category-card">
-                                <Icon icon={CATEGORY_ICONS[cat.slug]} style={{ fontSize: '2rem', marginBottom: '8px', color: 'var(--accent)' }} />
-                                <h4>{cat.name}</h4>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            </section>
-            {CATEGORIES.map((cat, idx) => {
-                const catProducts = PRODUCTS.filter(p => p.category.toLowerCase() === cat.slug).slice(0, 7)
-                if (catProducts.length === 0) return null
-                return <CategorySection key={cat.slug} title={cat.name} icon={CATEGORY_ICONS[cat.slug]} products={catProducts} />
-            })}
-            <section className="section section-alt">
-                <div className="container">
-                    <div className="how-it-works">
-                        <div className="step-card"><div className="step-number">1</div><h3>Browse & Select</h3><p>Filter by category, brand, or strain type and add to cart.</p></div>
-                        <div className="step-card"><div className="step-number">2</div><h3>Self-Certify (21+)</h3><p>No medical card needed. Register for a Visitor Pass via our <a href={BUSINESS.selfCertUrl} target="_blank" style={{ color: 'var(--gold)' }}>self-cert portal</a>.</p></div>
-                        <div className="step-card"><div className="step-number">3</div><h3>Delivery or Curbside</h3><p>Checkout with delivery to your DC address or curbside pickup.</p></div>
-                    </div>
-                </div>
-            </section>
-        </>
-    )
+  const featured = PRODUCTS.filter((p) => ['featured', 'sale', 'new', 'exclusive'].includes(p.badge)).slice(0, 6)
+  return (
+    <>
+      <Hero />
+      <section className="section">
+        <div className="container">
+          <div className="section-header text-center"><h2>Shop by category</h2></div>
+          <div className="categories-grid">
+            {CATEGORIES.map((cat) => (
+              <Link key={cat.slug} to={cat.path} className="category-card">
+                <img src={cat.image} alt="" onError={(e) => { e.currentTarget.src = '/images/storefront.jpg' }} />
+                <h4>{cat.name}</h4>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="section section-alt">
+        <div className="container">
+          <div className="section-header text-center"><h2>Featured</h2></div>
+          <div className="products-grid">{(featured.length ? featured : PRODUCTS.slice(0, 6)).map((p) => <ProductCard key={p.id} product={p} />)}</div>
+          <p className="text-center" style={{ marginTop: 28 }}><Link className="btn-primary" to="/shop">View full menu</Link></p>
+        </div>
+      </section>
+    </>
+  )
 }
 
 function Shop() {
-    const { PRODUCTS, CATEGORIES, CATEGORY_ICONS } = useApp()
-    const [filter, setFilter] = useState('all')
-    const [search, setSearch] = useState('')
-    const filtered = PRODUCTS.filter(p => {
-        const matchCat = filter === 'all' || p.category.toLowerCase() === filter
-        const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.brand.toLowerCase().includes(search.toLowerCase())
-        return matchCat && matchSearch
-    })
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>Shop</h1><p>Full menu. Add to cart, then checkout for delivery or curbside pickup.</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="search-row" style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
-                        <input type="search" placeholder="Search strains, brands..." value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1, padding: '10px 16px', borderRadius: 8, border: '1px solid var(--border)', minWidth: 200 }} />
-                        <select value={filter} onChange={e => setFilter(e.target.value)} style={{ padding: '10px 16px', borderRadius: 8, border: '1px solid var(--border)' }}>
-                            <option value="all">All Categories</option>
-                            {CATEGORIES.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-                        </select>
-                    </div>
-                    <div className="filter-bar" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-                        {CATEGORIES.map(c => (
-                            <button key={c.slug} onClick={() => setFilter(c.slug)} style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid var(--border)', background: filter === c.slug ? 'var(--gold)' : 'transparent', color: filter === c.slug ? 'var(--dark)' : 'var(--text)', fontWeight: 600, cursor: 'pointer' }}><Icon icon={CATEGORY_ICONS[c.slug]} style={{ marginRight: 4 }} />{c.name}</button>
-                        ))}
-                    </div>
-                    <div className="products-grid">{filtered.map(p => <ProductCard key={p.id} product={p} />)}</div>
-                </div>
-            </section>
+  const [q, setQ] = useState('')
+  const [filter, setFilter] = useState('all')
+  const list = PRODUCTS.filter((p) => (filter === 'all' || p.category === filter) && `${p.name} ${p.brand} ${p.strain}`.toLowerCase().includes(q.toLowerCase()))
+  return (
+    <>
+      <PageHero title="Shop" sub="Full menu. Delivery or curbside at checkout." />
+      <section className="section">
+        <div className="container">
+          <div className="search-row">
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search strains, brands…" />
+            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+              <option value="all">All categories</option>
+              {CATEGORIES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+            </select>
+          </div>
+          <div className="filter-bar">
+            <button className={filter === 'all' ? 'on' : ''} onClick={() => setFilter('all')}>All</button>
+            {CATEGORIES.map((c) => <button key={c.slug} className={filter === c.slug ? 'on' : ''} onClick={() => setFilter(c.slug)}>{c.name}</button>)}
+          </div>
+          <div className="products-grid">{list.map((p) => <ProductCard key={p.id} product={p} />)}</div>
         </div>
-    )
+      </section>
+    </>
+  )
+}
+
+function CategoryPage() {
+  const location = useLocation()
+  const { list, title } = filterProducts(location.pathname)
+  return (
+    <>
+      <PageHero title={title} sub={`${list.length} product${list.length === 1 ? '' : 's'}`} />
+      <section className="section">
+        <div className="container">
+          {location.pathname.startsWith('/flower') && (
+            <div className="filter-bar">
+              <Link to="/flower">All flower</Link>
+              <Link to="/flower/whole-flower">Whole flower</Link>
+              <Link to="/flower/shake">Shake</Link>
+              <Link to="/flower/small-buds">Small buds</Link>
+              <Link to="/flower/whole-flower/premium">Premium</Link>
+              <Link to="/flower/whole-flower/top-shelf">Top shelf</Link>
+              <Link to="/flower/whole-flower/exclusives">Exclusives</Link>
+            </div>
+          )}
+          {location.pathname.startsWith('/vapes') && (
+            <div className="filter-bar">
+              <Link to="/vapes">All vapes</Link>
+              <Link to="/vapes/disposables">Disposables</Link>
+              <Link to="/vapes/510-cartridges">510 cartridges</Link>
+            </div>
+          )}
+          <div className="products-grid">{list.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+          {!list.length && <p>Nothing in this category yet.</p>}
+        </div>
+      </section>
+    </>
+  )
 }
 
 function ProductPage() {
-    const { PRODUCTS } = useApp()
-    const { id } = useParams()
-    const product = PRODUCTS.find(p => p.id === parseInt(id))
-    if (!product) return <div className="page-container"><h1>Product not found</h1></div>
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>{product.name}</h1></div></div>
-            <section className="section">
-                <div className="container">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
-                        <div className="product-image" style={{ height: 400 }}><img src={product.image} alt={product.name} style={{ objectFit: 'cover' }} /></div>
-                        <div>
-                            <div className="product-brand">{product.brand}</div>
-                            <h1 style={{ fontSize: '2rem', marginBottom: 8 }}>{product.name}</h1>
-                            <div style={{ display: 'flex', gap: 16, marginBottom: 16, flexWrap: 'wrap' }}>
-                                <span style={{ background: 'var(--accent)', color: '#fff', padding: '4px 12px', borderRadius: 6, fontSize: '0.85rem', fontWeight: 600 }}>{product.strain}</span>
-                                <span style={{ color: 'var(--text-light)' }}>THC: {product.thc}</span>
-                                <span style={{ color: 'var(--text-light)' }}>Terps: {product.terps}</span>
-                            </div>
-                            <p style={{ fontSize: '1.1rem', lineHeight: 1.8, marginBottom: 16 }}>{product.description}</p>
-                            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginBottom: 20 }}>
-                                <h3 style={{ marginBottom: 12 }}>Product Details</h3>
-                                <p style={{ color: 'var(--text-light)' }}>Category: <strong>{product.category}</strong></p>
-                                <p style={{ color: 'var(--text-light)' }}>Weight: {product.weight || 'N/A'}</p>
-                                <p style={{ color: 'var(--text-light)' }}>Available: {product.available ? '✅ In Stock' : '❌ Out of Stock'}</p>
-                            </div>
-                            <div className="product-price" style={{ marginBottom: 20 }}>
-                                <span className="price" style={{ fontSize: '2rem' }}>${product.price}{product.oldPrice && <span className="price-old" style={{ fontSize: '1.3rem' }}>${product.oldPrice}</span>}</span>
-                            </div>
-                            <button className="checkout-btn" onClick={() => { addToCart(product); navigate('/cart'); }}><i className="fas fa-shopping-bag"></i> Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  const { id } = useParams()
+  const { addToCart } = useApp()
+  const navigate = useNavigate()
+  const product = PRODUCTS.find((p) => String(p.id) === String(id))
+  if (!product) return <><PageHero title="Product not found" /><section className="section"><div className="container"><Link to="/shop">Back to shop</Link></div></section></>
+  const related = PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4)
+  return (
+    <>
+      <PageHero title={product.name} sub={product.brand} />
+      <section className="section">
+        <div className="container product-layout">
+          <div className="product-image tall"><ProductImage src={product.image} alt={product.name} /></div>
+          <div>
+            <div className="product-brand">{product.brand}</div>
+            <h1>{product.name}</h1>
+            <p className="product-details">{product.strain} · THC {product.thc} · {product.weight}</p>
+            <p>{product.description}</p>
+            <p className="price">${product.price.toFixed(2)}</p>
+            <button className="checkout-btn" type="button" onClick={() => { addToCart(product); navigate('/cart') }}>Add to cart</button>
+          </div>
         </div>
-    )
+        {related.length > 0 && (
+          <div className="container" style={{ marginTop: 48 }}>
+            <h2>More in {product.category}</h2>
+            <div className="products-grid">{related.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+          </div>
+        )}
+      </section>
+    </>
+  )
 }
 
-function Brands() {
-    const { BRANDS } = useApp()
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>Featured Brands</h1><p>House product plus the labels people actually ask for in DC.</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="brand-grid">
-                        {BRANDS.map(brand => (
-                            <div key={brand.name} className="brand-card">
-                                <img src={brand.logo} alt={brand.name} className="brand-logo" style={{ borderRadius: '50%' }} />
-                                <div className="brand-name">{brand.name}</div>
-                                <div className="brand-blurb">{brand.blurb}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+function BrandsPage() {
+  return (
+    <>
+      <PageHero title="Brands we carry" sub="House product plus the labels people ask for in DC." />
+      <section className="section">
+        <div className="container brand-grid">
+          {BRANDS.map((b) => (
+            <Link key={b.name} to={`/brands/${b.name.toLowerCase().replace(/\s+/g, '-')}`} className="brand-card">
+              <img src={b.logo} alt="" className="brand-logo" onError={(e) => { e.currentTarget.src = '/images/logo.jpg' }} />
+              <div className="brand-name">{b.name}</div>
+              <div className="brand-blurb">{b.blurb}</div>
+            </Link>
+          ))}
         </div>
-    )
+      </section>
+    </>
+  )
+}
+
+function BrandDetail() {
+  const { slug } = useParams()
+  const { list, title } = filterProducts(`/brands/${slug}`)
+  return (
+    <>
+      <PageHero title={title} sub={`${list.length} products`} />
+      <section className="section"><div className="container"><div className="products-grid">{list.map((p) => <ProductCard key={p.id} product={p} />)}</div></div></section>
+    </>
+  )
 }
 
 function About() {
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>About DREAMZ DC</h1></div></div>
-            <section className="section">
-                <div className="container" style={{ display: 'grid', gridTemplateColumns: '1.1fr .9fr', gap: 28, alignItems: 'start' }}>
-                    <div>
-                        <h2 style={{ marginBottom: 12 }}>The shop</h2>
-                        <p style={{ marginBottom: 16 }}>DREAMZ DC Compound is Washington DC's premier cannabis dispensary and delivery service. We offer a carefully curated selection of premium flower, vapes, edibles, pre-rolls, concentrates, tinctures, topicals, and accessories — all lab-tested and legally sourced.</p>
-                        <h3 style={{ marginBottom: 8 }}>Our Mission</h3>
-                        <p>We're committed to providing the highest quality cannabis products at fair prices, with exceptional customer service and fast, discreet delivery across the DC metropolitan area.</p>
-                    </div>
-                    <div>
-                        <h3 style={{ marginBottom: 12 }}>Business Info</h3>
-                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                            <p><strong>Address:</strong> {BUSINESS.address}, {BUSINESS.city}, {BUSINESS.state} {BUSINESS.zip}</p>
-                            <p><strong>Phone:</strong> {BUSINESS.phone}</p>
-                            <p><strong>Email:</strong> {BUSINESS.email}</p>
-                            <h4 style={{ marginTop: 16, marginBottom: 8 }}>Hours</h4>
-                            <ul>
-                                {BUSINESS.hours.map(h => <li key={h.day}><strong>{h.day}:</strong> {h.open} - {h.close}</li>)}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  return (
+    <>
+      <PageHero title="About DREAMZ DC" sub="Washington DC dispensary and delivery." />
+      <section className="section">
+        <div className="container about-grid">
+          <div>
+            <p>DREAMZ DC Compound is at {BUSINESS.address}, {BUSINESS.city}, {BUSINESS.state} {BUSINESS.zip}.</p>
+            <p>No medical card required. Complete a Visitor Pass and bring a government photo ID.</p>
+            <p><a href={BUSINESS.selfCertUrl} target="_blank" rel="noreferrer">Register for a Visitor Pass</a></p>
+          </div>
+          <img src="/images/storefront.jpg" alt="Storefront" className="about-photo" />
         </div>
-    )
+      </section>
+    </>
+  )
 }
 
-function Delivery() {
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>Delivery & Shipping</h1><p>Fast, discreet delivery across Washington DC.</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="how-it-works">
-                        <div className="step-card"><div className="step-number">1</div><h3>Order Online</h3><p>Browse our menu and add items to your cart.</p></div>
-                        <div className="step-card"><div className="step-number">2</div><h3>Choose Delivery</h3><p>Pick delivery or curbside at checkout.</p></div>
-                        <div className="step-card"><div className="step-number">3</div><h3>Get Your Order</h3><p>Average delivery time is ~2 hours across DC.</p></div>
-                    </div>
-                </div>
-            </section>
+function DeliveryPage() {
+  return (
+    <>
+      <PageHero title="Delivery & curbside" sub="DC delivery in about two hours. Pickup at the shop." />
+      <section className="section">
+        <div className="container how-it-works">
+          <div className="step-card"><div className="step-number">1</div><h3>Shop the menu</h3><p>Add products, then go to checkout.</p></div>
+          <div className="step-card"><div className="step-number">2</div><h3>Pick fulfillment</h3><p>Delivery needs a DC address. Curbside is at {BUSINESS.address}.</p></div>
+          <div className="step-card"><div className="step-number">3</div><h3>ID at handoff</h3><p>21+ with photo ID. Average delivery ~2 hours.</p></div>
         </div>
-    )
-}
-
-function Blog() {
-    const articles = [
-        { id: 1, title: 'How to buy cannabis in Washington, DC', excerpt: 'Self-certification, Visitor Pass, and what to bring.', image: '/images/Code_Generated_Image (12).jpg', tag: 'Guide' },
-        { id: 2, title: 'How delivery works at DREAMZ DC', excerpt: 'Order online, we confirm, then a runner is at your door.', image: '/images/storefront.jpg', tag: 'Delivery' },
-        { id: 3, title: 'Indica, sativa, hybrid — a practical split', excerpt: 'Use strain type plus terpenes, not just the label.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg', tag: 'Education' },
-    ]
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>From the blog</h1><p>How buying works in DC, delivery, strains, and shop notes.</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="blog-grid">
-                        {articles.map(article => (
-                            <a key={article.id} href={`/blog/${article.id}`} style={{ textDecoration: 'none', color: 'inherit' }} className="blog-card">
-                                <div className="blog-image"><img src={article.image} alt={article.title} /></div>
-                                <div className="blog-info">
-                                    <span className="blog-tag" style={{ background: 'var(--accent)', color: '#fff' }}>{article.tag}</span>
-                                    <h3 className="blog-title">{article.title}</h3>
-                                    <p className="blog-excerpt">{article.excerpt}</p>
-                                </div>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            </section>
-        </div>
-    )
-}
-
-function BlogArticle() {
-    const { id } = useParams()
-    const articles = [
-        { id: 1, title: 'How to buy cannabis in Washington, DC', body: 'Buying cannabis in Washington, DC is straightforward once you know the process. First, you must be 21 or older. Next, complete the self-certification process at the DC Visitor Pass portal (https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageID=39). This gives you instant approval without needing a medical card. Once certified, you can visit any dispensary or order online for delivery. Make sure to bring a valid government-issued photo ID. DC has a vibrant cannabis scene with hundreds of products available, from flower and vapes to edibles and concentrates. Prices vary by brand and potency, but expect to pay $30-75 for premium flower and $45-72 for vapes. Always look for lab-tested products to ensure quality and safety.', image: '/images/Code_Generated_Image (12).jpg' },
-        { id: 2, title: 'How delivery works at DREAMZ DC', body: 'Delivery at DREAMZ DC is fast, discreet, and reliable. After placing your order online, our team reviews and confirms your order within minutes. We then dispatch a runner to your verified DC address. Average delivery time is approximately 2 hours across the Washington DC metropolitan area. At checkout, you can choose between home delivery or curbside pickup. All orders require age verification upon delivery — our runner will check your ID before handing over your package. Delivery is available 7 days a week, with Sunday–Wednesday hours from 10AM to midnight and Thursday–Saturday from 10AM to 3AM EST.', image: '/images/storefront.jpg' },
-        { id: 3, title: 'Indica, sativa, hybrid — a practical split', body: 'Understanding the difference between indica, sativa, and hybrid strains is essential for finding the right cannabis product. Indica strains are known for their relaxing, body-high effects — ideal for evening use, pain relief, and sleep. Sativa strains provide uplifting, cerebral effects — great for daytime use, creativity, and socializing. Hybrids combine both, offering a balanced experience. At DREAMZ DC, we label every product with its strain type and terpene profile so you can make informed decisions. Remember, THC percentage is not the only factor — terpenes play a crucial role in the experience. Our staff can help you navigate the menu based on your preferences and desired effects.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
-    ]
-    const article = articles.find(a => a.id === parseInt(id))
-    if (!article) return <div className="page-container"><h1>Article not found</h1></div>
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>{article.title}</h1></div></div>
-            <section className="section">
-                <div className="container" style={{ maxWidth: 800 }}>
-                    <img src={article.image} alt={article.title} style={{ width: '100%', borderRadius: 16, marginBottom: 24 }} />
-                    <div style={{ lineHeight: 2, fontSize: '1.05rem', color: 'var(--text)' }}>
-                        {article.body.split('\n').map((p, i) => <p key={i}>{p}</p>)}
-                    </div>
-                </div>
-            </section>
-        </div>
-    )
+      </section>
+    </>
+  )
 }
 
 function FAQ() {
-    const faqs = [
-        { q: 'Do I need a medical card?', a: 'No! DC allows adult-use cannabis for anyone 21+ with valid ID. Complete self-certification at our portal.' },
-        { q: 'What forms of payment do you accept?', a: 'We accept cash and debit cards. No credit cards at this time.' },
-        { q: 'How long does delivery take?', a: 'Average delivery time is approximately 2 hours across the DC metro area.' },
-        { q: 'Can I pick up my order?', a: 'Yes! Curbside pickup is available. Just select it at checkout.' },
-        { q: 'What is the age requirement?', a: 'You must be 21 or older with a valid government-issued photo ID.' },
-    ]
-    const [open, setOpen] = useState(null)
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>FAQ</h1><p>Common questions about DREAMZ DC.</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="faq-list">
-                        {faqs.map((faq, i) => (
-                            <div key={i} className={`faq-item ${open === i ? 'open' : ''}`}>
-                                <div className="faq-question" onClick={() => setOpen(open === i ? null : i)}>
-                                    {faq.q} <i className="fas fa-chevron-down"></i>
-                                </div>
-                                <div className="faq-answer">{faq.a}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-        </div>
-    )
-}
-
-function AdminLogin() {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
-    const { setUser, setNotifications } = useApp()
-    const navigate = useNavigate()
-
-    const handleLogin = (e) => {
-        e.preventDefault()
-        if (username === 'admin' && password === 'DREAMZ2026!') {
-            setUser({ name: 'Admin', role: 'admin' })
-            setNotifications([
-                { id: 1, type: 'order', message: 'New order #1001 — 3 items, $142.00', time: '2 min ago' },
-                { id: 2, type: 'promo', message: 'Summer Sale: 20% off all flower', time: '1 hr ago' },
-                { id: 3, type: 'lowstock', message: 'Ganjavores Green Crack — only 2 left', time: '3 hrs ago' },
-            ])
-            navigate('/admin')
-        } else {
-            setError('Invalid credentials')
-        }
-    }
-
-    return (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1a1a2e, #16213e)' }}>
-            <div style={{ background: '#fff', borderRadius: 20, padding: 48, maxWidth: 400, width: '100%' }}>
-                <h1 style={{ textAlign: 'center', marginBottom: 8 }}>🚬 DREAMZ DC</h1>
-                <p style={{ textAlign: 'center', color: 'var(--text-light)', marginBottom: 32 }}>Admin Dashboard</p>
-                <form onSubmit={handleLogin}>
-                    <div className="form-field" style={{ marginBottom: 16 }}>
-                        <label>Username</label>
-                        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="admin" required />
-                    </div>
-                    <div className="form-field" style={{ marginBottom: 16 }}>
-                        <label>Password</label>
-                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" required />
-                    </div>
-                    {error && <p style={{ color: 'var(--accent)', marginBottom: 8, fontSize: '0.85rem' }}>{error}</p>}
-                    <button type="submit" className="checkout-btn" style={{ width: '100%', marginTop: 8 }}>Sign In</button>
-                </form>
-                <p style={{ textAlign: 'center', marginTop: 16, fontSize: '0.8rem', color: 'var(--text-light)' }}>Credentials: admin / DREAMZ2026!</p>
+  const faqs = [
+    { q: 'Do I need a medical card?', a: 'No. Adults 21+ with a valid ID can shop after self-certification.' },
+    { q: 'Where are you?', a: `${BUSINESS.address}, ${BUSINESS.city}, ${BUSINESS.state} ${BUSINESS.zip}` },
+    { q: 'Do you deliver?', a: 'Yes, across Washington DC. Free delivery on orders $75+.' },
+    { q: 'Can I pick up?', a: 'Yes — choose curbside at checkout.' },
+    { q: 'What payment do you take?', a: 'Cash and debit. No credit cards at this time.' },
+  ]
+  const [open, setOpen] = useState(0)
+  return (
+    <>
+      <PageHero title="FAQ" />
+      <section className="section">
+        <div className="container faq-list">
+          {faqs.map((f, i) => (
+            <div key={f.q} className={`faq-item ${open === i ? 'open' : ''}`}>
+              <button type="button" className="faq-question" onClick={() => setOpen(open === i ? -1 : i)}>{f.q} <span>▾</span></button>
+              <div className="faq-answer">{f.a}</div>
             </div>
+          ))}
         </div>
-    )
+      </section>
+    </>
+  )
 }
 
-function AdminDashboard() {
-    const { user, setUser, orders, setOrders, promos, setPromos, notifications, setNotifications } = useApp()
-    const navigate = useNavigate()
-    const [tab, setTab] = useState('overview')
-
-    if (!user) return <AdminLogin />
-
-    const handleLogout = () => { setUser(null); navigate('/admin') }
-
-    return (
-        <div>
-            <header className="header scrolled"><div className="container">
-                <a href="/" className="logo"><img src="/images/logo.jpg" alt="" /><div><div className="logo-text">DREAMZ DC</div></div></a>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ color: '#fff' }}>Welcome, {user.name}</span>
-                    <button className="cart-btn" onClick={handleLogout}>Logout</button>
-                </div>
-            </div></header>
-            <div className="page-hero" style={{ paddingTop: 80 }}><div className="page-container"><h1>Admin Dashboard</h1></div></div>
-            <section className="section">
-                <div className="container">
-                    <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
-                        {['overview', 'orders', 'promos', 'notifications'].map(t => (
-                            <button key={t} onClick={() => setTab(t)} style={{ padding: '8px 20px', borderRadius: 8, border: 'none', background: tab === t ? 'var(--accent)' : 'var(--border)', color: tab === t ? '#fff' : 'var(--text)', fontWeight: 600, cursor: 'pointer' }}>{t.charAt(0).toUpperCase() + t.slice(1)}</button>
-                        ))}
-                    </div>
-                    {tab === 'overview' && (
-                        <div>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
-                                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                                    <div style={{ color: 'var(--text-light)', fontSize: '0.85rem' }}>Total Orders</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: 700 }}>{orders.length}</div>
-                                </div>
-                                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                                    <div style={{ color: 'var(--text-light)', fontSize: '0.85rem' }}>Active Promos</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: 700 }}>{promos.length}</div>
-                                </div>
-                                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                                    <div style={{ color: 'var(--text-light)', fontSize: '0.85rem' }}>Revenue</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: 700 }}>$0.00</div>
-                                </div>
-                                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                                    <div style={{ color: 'var(--text-light)', fontSize: '0.85rem' }}>Notifications</div>
-                                    <div style={{ fontSize: '2rem', fontWeight: 700 }}>{notifications.length}</div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    {tab === 'orders' && (
-                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                            <h2 style={{ marginBottom: 16 }}>Orders</h2>
-                            <p style={{ color: 'var(--text-light)' }}>No orders yet.</p>
-                        </div>
-                    )}
-                    {tab === 'promos' && (
-                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                            <h2 style={{ marginBottom: 16 }}>Active Promotions</h2>
-                            <p style={{ color: 'var(--text-light)' }}>No active promotions.</p>
-                        </div>
-                    )}
-                    {tab === 'notifications' && (
-                        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
-                            <h2 style={{ marginBottom: 16 }}>Notifications</h2>
-                            {notifications.map(n => (
-                                <div key={n.id} style={{ padding: '12px 0', borderBottom: '1px solid var(--border)' }}>{n.message} <span style={{ color: 'var(--text-light)', fontSize: '0.8rem' }}>({n.time})</span></div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
+function Blog() {
+  const posts = [
+    { id: '1', title: 'How to buy cannabis in Washington, DC', excerpt: 'Self-certification, Visitor Pass, and what to bring.', image: '/images/storefront.jpg' },
+    { id: '2', title: 'How delivery works at DREAMZ DC', excerpt: 'Order online, we confirm, then a runner is at your door.', image: '/images/store inside.jpg' },
+    { id: '3', title: 'Indica, sativa, hybrid — a practical split', excerpt: 'Use strain type plus terpenes, not just the label.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
+  ]
+  return (
+    <>
+      <PageHero title="Blog" />
+      <section className="section">
+        <div className="container blog-grid">
+          {posts.map((p) => (
+            <Link key={p.id} to={`/blog/${p.id}`} className="blog-card">
+              <div className="blog-image"><img src={p.image} alt="" /></div>
+              <div className="blog-info"><h3 className="blog-title">{p.title}</h3><p className="blog-excerpt">{p.excerpt}</p></div>
+            </Link>
+          ))}
         </div>
-    )
+      </section>
+    </>
+  )
 }
 
-function Cart() {
-    const { cart, cartCount, cartTotal, removeFromCart, updateQty } = useApp()
-    const navigate = useNavigate()
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>Your Cart</h1><p>{cartCount} items — Total: ${cartTotal.toFixed(2)}</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="checkout-grid">
-                        <div>
-                            {cart.length === 0 ? <p>Your cart is empty</p> : cart.map(item => (
-                                <div key={item.id} className="cart-item">
-                                    <img src={item.image} alt={item.name} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }} />
-                                    <div className="cart-item-info">
-                                        <div className="cart-item-name">{item.name}</div>
-                                        <div className="cart-item-qty">{item.brand} • Qty: {item.qty}</div>
-                                    </div>
-                                    <div>
-                                        <div className="cart-item-price">${(item.price * item.qty).toFixed(2)}</div>
-                                        <input type="number" value={item.qty} onChange={e => updateQty(item.id, parseInt(e.target.value) || 1)} min="1" style={{ width: 60, padding: 4, marginTop: 8 }} />
-                                        <button onClick={() => removeFromCart(item.id)} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', marginLeft: 8 }}>Remove</button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div>
-                            <div className="form-card">
-                                <h2 style={{ marginBottom: 16 }}>Order Summary</h2>
-                                <div className="cart-total"><span>Total</span><span>${cartTotal.toFixed(2)}</span></div>
-                                <button className="checkout-btn" onClick={() => navigate('/checkout')}>Proceed to Checkout</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+function BlogArticle() {
+  const { id } = useParams()
+  const posts = {
+    '1': { title: 'How to buy cannabis in Washington, DC', body: 'You must be 21+. Complete the DC Visitor Pass / self-cert, then shop in store or order delivery with a government photo ID.', image: '/images/storefront.jpg' },
+    '2': { title: 'How delivery works at DREAMZ DC', body: 'Place the order, choose delivery, we confirm, then a runner brings it to your DC address. Average time is about two hours.', image: '/images/store inside.jpg' },
+    '3': { title: 'Indica, sativa, hybrid — a practical split', body: 'Indica leans body and evening. Sativa leans daytime. Hybrids sit in the middle.', image: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
+  }
+  const post = posts[id]
+  if (!post) return <PageHero title="Article not found" />
+  return (
+    <>
+      <PageHero title={post.title} />
+      <section className="section"><div className="container" style={{ maxWidth: 760 }}><img src={post.image} alt="" style={{ width: '100%', borderRadius: 16, marginBottom: 24 }} /><p>{post.body}</p></div></section>
+    </>
+  )
+}
+
+function MedReg() {
+  return (
+    <>
+      <PageHero title="Medical / Visitor Pass" sub="No card? Self-certify before pickup or delivery." />
+      <section className="section">
+        <div className="container">
+          <p>DC allows adult-use purchases for 21+ after you register for a Visitor Pass.</p>
+          <p><a className="btn-primary" href={BUSINESS.selfCertUrl} target="_blank" rel="noreferrer">Open self-cert portal</a></p>
         </div>
-    )
+      </section>
+    </>
+  )
+}
+
+function CartPage() {
+  const { cart, cartTotal, updateQty, removeFromCart } = useApp()
+  return (
+    <>
+      <PageHero title="Cart" sub={cart.length ? `${cart.length} line${cart.length === 1 ? '' : 's'}` : 'Empty'} />
+      <section className="section">
+        <div className="container checkout-grid">
+          <div>
+            {!cart.length && <p>Your cart is empty. <Link to="/shop">Shop the menu</Link>.</p>}
+            {cart.map((item) => (
+              <div key={item.id} className="cart-item">
+                <img src={item.image} alt="" />
+                <div className="cart-item-info">
+                  <div className="cart-item-name">{item.name}</div>
+                  <div className="cart-item-qty">{item.brand}</div>
+                  <input type="number" min="1" value={item.qty} onChange={(e) => updateQty(item.id, parseInt(e.target.value, 10) || 1)} />
+                  <button type="button" onClick={() => removeFromCart(item.id)}>Remove</button>
+                </div>
+                <div className="cart-item-price">${(item.price * item.qty).toFixed(2)}</div>
+              </div>
+            ))}
+          </div>
+          <div className="form-card">
+            <h2>Summary</h2>
+            <div className="cart-total"><span>Total</span><span>${cartTotal.toFixed(2)}</span></div>
+            <Link className="checkout-btn" to="/checkout">Checkout</Link>
+          </div>
+        </div>
+      </section>
+    </>
+  )
 }
 
 function Checkout() {
-    const { cart, cartTotal } = useApp()
-    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '' })
-    const [orderPlaced, setOrderPlaced] = useState(false)
-
-    if (orderPlaced) return <div className="page-container" style={{ textAlign: 'center', padding: 80 }}><h1>Order Placed! ✅</h1><p>Thank you for your order. We'll confirm via email.</p></div>
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        setOrderPlaced(true)
-    }
-
-    return (
-        <div>
-            <div className="page-hero"><div className="page-container"><h1>Checkout</h1><p>Delivery across DC or curbside pickup.</p></div></div>
-            <section className="section">
-                <div className="container">
-                    <div className="checkout-grid">
-                        <form className="form-card" onSubmit={handleSubmit}>
-                            <h2 style={{ marginBottom: 16 }}>Your details</h2>
-                            <div className="form-grid">
-                                <div className="form-field"><label>First name <span className="req">*</span></label><input value={form.firstName} onChange={e => setForm({...form, firstName: e.target.value})} required /></div>
-                                <div className="form-field"><label>Last name <span className="req">*</span></label><input value={form.lastName} onChange={e => setForm({...form, lastName: e.target.value})} required /></div>
-                                <div className="form-field full"><label>Email <span className="req">*</span></label><input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required /></div>
-                                <div className="form-field full"><label>Phone <span className="opt">(optional)</span></label><input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} /></div>
-                            </div>
-                            <button type="submit" className="checkout-btn" style={{ marginTop: 16 }}>Place Order</button>
-                        </form>
-                        <div className="form-card">
-                            <h2 style={{ marginBottom: 16 }}>Order Summary</h2>
-                            <div className="cart-total"><span>Total</span><span>${cartTotal.toFixed(2)}</span></div>
-                            {cart.map(item => <div key={item.id} style={{ padding: '8px 0', borderBottom: '1px solid var(--border)' }}>{item.name} x{item.qty}</div>)}
-                        </div>
-                    </div>
-                </div>
-            </section>
+  const { cart, cartTotal, clearCart, setOrders } = useApp()
+  const [method, setMethod] = useState('delivery')
+  const [done, setDone] = useState(false)
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', street: '', apt: '', city: 'Washington', state: 'DC', zip: '20003', notes: '' })
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  if (done) return <><PageHero title="Order received" /><section className="section"><div className="container"><p>We will confirm by email. Have your ID ready.</p></div></section></>
+  const submit = (e) => {
+    e.preventDefault()
+    setOrders((prev) => [...prev, { id: Date.now(), method, form, cart, total: cartTotal }])
+    clearCart()
+    setDone(true)
+  }
+  return (
+    <>
+      <PageHero title="Checkout" sub="Delivery across DC or curbside at the shop." />
+      <section className="section">
+        <div className="container checkout-grid">
+          <form className="form-card" onSubmit={submit}>
+            <h2>Fulfillment</h2>
+            <div className="method-row">
+              <label className={method === 'delivery' ? 'on' : ''}><input type="radio" name="method" checked={method === 'delivery'} onChange={() => setMethod('delivery')} /> Delivery</label>
+              <label className={method === 'curbside' ? 'on' : ''}><input type="radio" name="method" checked={method === 'curbside'} onChange={() => setMethod('curbside')} /> Curbside pickup</label>
+            </div>
+            <div className="form-grid">
+              <div className="form-field"><label>First name <span className="req">*</span></label><input required value={form.firstName} onChange={set('firstName')} /></div>
+              <div className="form-field"><label>Last name <span className="req">*</span></label><input required value={form.lastName} onChange={set('lastName')} /></div>
+              <div className="form-field full"><label>Email <span className="req">*</span></label><input type="email" required value={form.email} onChange={set('email')} /></div>
+              <div className="form-field full"><label>Phone <span className="opt">(optional)</span></label><input value={form.phone} onChange={set('phone')} /></div>
+              {method === 'delivery' && (
+                <>
+                  <div className="form-field full"><label>Delivery street <span className="req">*</span></label><input required value={form.street} onChange={set('street')} /></div>
+                  <div className="form-field"><label>Apt <span className="opt">(optional)</span></label><input value={form.apt} onChange={set('apt')} /></div>
+                  <div className="form-field"><label>City <span className="req">*</span></label><input required value={form.city} onChange={set('city')} /></div>
+                  <div className="form-field"><label>State <span className="req">*</span></label><input required value={form.state} onChange={set('state')} /></div>
+                  <div className="form-field"><label>ZIP <span className="req">*</span></label><input required value={form.zip} onChange={set('zip')} /></div>
+                </>
+              )}
+              {method === 'curbside' && <p className="full">Pickup: {BUSINESS.address}, {BUSINESS.city}, {BUSINESS.state} {BUSINESS.zip}</p>}
+              <div className="form-field full"><label>Notes <span className="opt">(optional)</span></label><input value={form.notes} onChange={set('notes')} /></div>
+            </div>
+            <button className="checkout-btn" type="submit" disabled={!cart.length}>Place order · ${cartTotal.toFixed(2)}</button>
+          </form>
+          <div className="form-card">
+            <h2>Bag</h2>
+            {cart.map((i) => <div key={i.id} className="bag-line">{i.name} × {i.qty}</div>)}
+            {!cart.length && <p>Cart is empty.</p>}
+            <div className="cart-total"><span>Total</span><span>${cartTotal.toFixed(2)}</span></div>
+          </div>
         </div>
-    )
+      </section>
+    </>
+  )
 }
 
-function AppContent() {
+function AdminDashboard() {
+  const { user, setUser, orders } = useApp()
+  const [form, setForm] = useState({ username: '', password: '' })
+  const [error, setError] = useState('')
+  if (!user) {
     return (
-        <div className="App">
-            <AgeGate />
-            <Header />
-            <main>
-                <AnnouncementBar />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/shop" element={<Shop />} />
-                    <Route path="/shop/:id" element={<ProductPage />} />
-                    <Route path="/brands" element={<Brands />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/delivery" element={<Delivery />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/blog/:id" element={<BlogArticle />} />
-                    <Route path="/faq" element={<FAQ />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-            </main>
-            <Footer />
-        </div>
+      <div className="admin-login">
+        <form className="form-card" onSubmit={(e) => {
+          e.preventDefault()
+          if (form.username === 'admin' && form.password === 'DREAMZ2026!') setUser({ name: 'Admin', role: 'admin' })
+          else setError('Invalid credentials')
+        }}>
+          <h1>DREAMZ admin</h1>
+          <div className="form-field"><label>Username</label><input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /></div>
+          <div className="form-field"><label>Password</label><input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
+          {error && <p className="gate-error">{error}</p>}
+          <button className="checkout-btn" type="submit">Sign in</button>
+        </form>
+      </div>
     )
+  }
+  return (
+    <>
+      <PageHero title="Admin" sub={`Signed in as ${user.name}`} />
+      <section className="section">
+        <div className="container">
+          <button type="button" className="add-cart" onClick={() => setUser(null)}>Log out</button>
+          <h2 style={{ margin: '24px 0 12px' }}>Orders ({orders.length})</h2>
+          {!orders.length && <p>No orders in this browser session yet.</p>}
+          {orders.map((o) => (
+            <div key={o.id} className="form-card" style={{ marginBottom: 12 }}>
+              <strong>#{o.id}</strong> · {o.method} · ${o.total.toFixed(2)} · {o.form.email}
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+}
+
+function Toast() {
+  const { toast } = useApp()
+  if (!toast) return null
+  return <div className="toast">{toast}</div>
+}
+
+function AppShell() {
+  return (
+    <div className="App">
+      <AgeGate />
+      <AnnouncementBar />
+      <Header />
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/:id" element={<ProductPage />} />
+          <Route path="/categories" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/flower/*" element={<CategoryPage />} />
+          <Route path="/flower" element={<CategoryPage />} />
+          <Route path="/vapes/*" element={<CategoryPage />} />
+          <Route path="/vapes" element={<CategoryPage />} />
+          <Route path="/prerolls/*" element={<CategoryPage />} />
+          <Route path="/prerolls" element={<CategoryPage />} />
+          <Route path="/edibles" element={<CategoryPage />} />
+          <Route path="/concentrates" element={<CategoryPage />} />
+          <Route path="/tinctures" element={<CategoryPage />} />
+          <Route path="/topicals" element={<CategoryPage />} />
+          <Route path="/accessories" element={<CategoryPage />} />
+          <Route path="/merch" element={<CategoryPage />} />
+          <Route path="/brands" element={<BrandsPage />} />
+          <Route path="/brands/:slug" element={<BrandDetail />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/delivery" element={<DeliveryPage />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogArticle />} />
+          <Route path="/med-reg" element={<MedReg />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <Footer />
+      <Toast />
+    </div>
+  )
 }
 
 export default function App() {
-    return (
-        <AppProvider>
-            <BrowserRouter>
-                <AppContent />
-            </BrowserRouter>
-        </AppProvider>
-    )
+  return (
+    <AppProvider>
+      <BrowserRouter>
+        <AppShell />
+      </BrowserRouter>
+    </AppProvider>
+  )
 }

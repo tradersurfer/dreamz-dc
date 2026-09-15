@@ -1,0 +1,8 @@
+[build]
+  command = "rm -f public/index.html public/about.html public/shop.html public/blog.html public/brands.html public/checkout.html public/delivery.html public/faq.html public/med-reg.html public/product.html && npm install --legacy-peer-deps && npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

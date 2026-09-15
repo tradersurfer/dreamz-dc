@@ -1,5 +1,8 @@
 {
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "vite build",
-  "devCommand": "vite"
+  "buildCommand": "rm -f public/index.html public/about.html public/shop.html public/blog.html public/brands.html public/checkout.html public/delivery.html public/faq.html public/med-reg.html public/product.html && vite build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/((?!api/|images/|assets/).*)", "destination": "/index.html" }
+  ]
 }
