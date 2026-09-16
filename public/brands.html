@@ -27,12 +27,20 @@
 <script src="/js/site.js"></script>
 <script>
   const brands = [
-    { slug: 'dreamz-compound', name: 'DREAMZ COMPOUND', blurb: 'Our signature line — flower, vapes, edibles, topicals.', img: '/images/Frozen Black Cherry by DREAMZ - Top Shelf Whole Flower.jpg' },
-    { slug: 'cookies', name: 'Cookies', blurb: 'Premium genetics, flower, and Fat Boy hardware.', img: '/images/Gary Payton by Cookies -Premium Whole Flower.jpg' },
-    { slug: 'ganjavores', name: 'Ganjavores', blurb: 'DC-rooted flower and vapes.', img: '/images/Green Crack by Ganjavores - Premium Flower.jpg' },
-    { slug: 'jeeter-juice', name: 'Jeeter Juice', blurb: 'Live resin straw disposables.', img: '/images/Jeeter Juice - Wedding Cake (Hybrid) - Disposable Straw Vape - 1G - Live Resin.jpg' },
-    { slug: 'sunflower-by-eva', name: 'Sunflower by Eva', blurb: 'Local-favorite flower drops.', img: '/images/Code_Generated_Image (15).jpg' },
-    { slug: 'muha-meds', name: 'Muha Meds', blurb: 'Cartridges and high-dose edibles.', img: '/images/Code_Generated_Image (23).jpg' }
+    { slug: 'dreamz-compound', name: 'DREAMZ DC COMPOUND', blurb: 'Our signature line — flower, vapes, edibles, topicals.', img: '/images/logo.jpg' },
+    { slug: 'cookies', name: 'Cookies', blurb: 'Premium genetics, flower, and Fat Boy hardware.', img: '/images/cookies-brand-logo.jpg' },
+    { slug: 'ganjavores', name: 'Ganjavores', blurb: 'DC-rooted flower and vapes.', img: '/images/ganjavores-dispensary-brand-logo.jpg' },
+    { slug: 'jeeter-juice', name: 'Jeeter Juice', blurb: 'Live resin straw disposables.', img: '/images/jeeter-juice-brand-logo.jpg' },
+    { slug: 'jungle-boys', name: 'Jungle Boys', blurb: 'Flower bud cultivated in Los Angeles, California.', img: '/images/jungleboys_logo.jpg' },
+    { slug: 'muha-meds', name: 'Muha Meds', blurb: 'Cartridges and high-dose edibles.', img: '/images/muhameds-crest-brand-logo.jpg' },
+    { slug: 'trulieve', name: 'Trulieve', blurb: 'Locally-Sourced!', img: '/images/trulieve-brand-logo.jpg' },
+    { slug: 'khalifa-kush', name: 'Khalifa Kush', blurb: 'Exclusive bud strains by Wiz Khalifa.', img: '/images/khalifa-kush-brand-logo.jpg' },
+    { slug: 'grow-west', name: 'Grow West', blurb: 'Premium flower and vapes.', img: '/images/grow-west-brand-logo.jpg' },
+    { slug: 'district-cannabis', name: 'District Cannabis', blurb: 'Premium & Top-Shelf flower and concentrates.', img: '/images/district-cannabis-logo-new.jpg' },
+    { slug: 'friendly-farms', name: 'Friendly Farms', blurb: 'East Coast grown flower, concentrates & vapes.', img: '/images/friendly-farms-brand-logo.jpg' },
+    { slug: 'district-cannabis', name: 'District Cannabis', blurb: 'Exclusive edible gummies, the #1 Edible Brand.', img: '/images/DeVour-Edibles-brand-logo.jpg' },
+    { slug: 'cultivation-labs', name: 'Cultivation Labs', blurb: 'Local grown, Maryland-based - Flower, Vapes & Edibles.', img: '/images/cultivation-labs-brand-logo.jpg' },
+    { slug: 'bargain-budd', name: 'Bargain Budd', blurb: 'Local-grown flower and concentrates.', img: '/images/bargainbudd-logo.jpg' }
   ];
   document.getElementById('brandGrid').innerHTML = brands.map(b => `
     <a class="brand-card" href="/shop.html?brand=${encodeURIComponent(b.slug)}">
