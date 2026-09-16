@@ -10,10 +10,16 @@ function AppProvider({ children }) {
   const [cart, setCart] = useState(() => {
     try { return JSON.parse(localStorage.getItem('dreamz_cart') || '[]') } catch { return [] }
   })
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dreamz_admin') || 'null') } catch { return null }
+  })
   const [orders, setOrders] = useState([])
   const [toast, setToast] = useState('')
   useEffect(() => { localStorage.setItem('dreamz_cart', JSON.stringify(cart)) }, [cart])
+  useEffect(() => {
+    if (user) localStorage.setItem('dreamz_admin', JSON.stringify(user))
+    else localStorage.removeItem('dreamz_admin')
+  }, [user])
   const addToCart = useCallback((product) => {
     setCart((prev) => {
       const existing = prev.find((i) => i.id === product.id)
@@ -631,6 +637,9 @@ function Checkout() {
   )
 }
 
+const ADMIN_EMAIL = 'jordanad46@gmail.com'
+const ADMIN_PASSWORD = 'LoneWolf.276$'
+
 function AdminDashboard() {
   const { user, setUser, orders } = useApp()
   const [form, setForm] = useState({ username: '', password: '' })
@@ -640,12 +649,16 @@ function AdminDashboard() {
       <div className="admin-login">
         <form className="form-card" onSubmit={(e) => {
           e.preventDefault()
-          if (form.username === 'admin' && form.password === 'DREAMZ2026!') setUser({ name: 'Admin', role: 'admin' })
-          else setError('Invalid credentials')
+          const id = form.username.trim().toLowerCase()
+          const okEmail = id === ADMIN_EMAIL || id === 'admin'
+          if (okEmail && form.password === ADMIN_PASSWORD) {
+            setUser({ name: 'Adrian Jordan', email: ADMIN_EMAIL, role: 'admin' })
+            setError('')
+          } else setError('Invalid email or password')
         }}>
           <h1>DREAMZ admin</h1>
-          <div className="form-field"><label>Username</label><input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /></div>
-          <div className="form-field"><label>Password</label><input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
+          <div className="form-field"><label>Email</label><input type="email" autoComplete="username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /></div>
+          <div className="form-field"><label>Password</label><input type="password" autoComplete="current-password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
           {error && <p className="gate-error">{error}</p>}
           <button className="checkout-btn" type="submit">Sign in</button>
         </form>
