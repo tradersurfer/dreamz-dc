@@ -2,6 +2,8 @@ import { useState, useEffect, createContext, useContext, useCallback, useMemo } 
 import { BrowserRouter, Routes, Route, Navigate, NavLink, Link, useNavigate, useLocation, useParams } from 'react-router-dom'
 import { BUSINESS, CATEGORIES, PRODUCTS, BRANDS, filterProducts } from './data.js'
 import './styles.css'
+import './admin.css'
+import { AdminShell, AdminLogin, AdminProvider } from './admin.jsx'
 
 const AppContext = createContext(null)
 const useApp = () => useContext(AppContext)
@@ -637,53 +639,6 @@ function Checkout() {
   )
 }
 
-const ADMIN_EMAIL = 'jordanad46@gmail.com'
-const ADMIN_PASSWORD = 'LoneWolf.276$'
-
-function AdminDashboard() {
-  const { user, setUser, orders } = useApp()
-  const [form, setForm] = useState({ username: '', password: '' })
-  const [error, setError] = useState('')
-  if (!user) {
-    return (
-      <div className="admin-login">
-        <form className="form-card" onSubmit={(e) => {
-          e.preventDefault()
-          const id = form.username.trim().toLowerCase()
-          const okEmail = id === ADMIN_EMAIL || id === 'admin'
-          if (okEmail && form.password === ADMIN_PASSWORD) {
-            setUser({ name: 'Adrian Jordan', email: ADMIN_EMAIL, role: 'admin' })
-            setError('')
-          } else setError('Invalid email or password')
-        }}>
-          <h1>DREAMZ admin</h1>
-          <div className="form-field"><label>Email</label><input type="email" autoComplete="username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /></div>
-          <div className="form-field"><label>Password</label><input type="password" autoComplete="current-password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
-          {error && <p className="gate-error">{error}</p>}
-          <button className="checkout-btn" type="submit">Sign in</button>
-        </form>
-      </div>
-    )
-  }
-  return (
-    <>
-      <PageHero title="Admin" sub={`Signed in as ${user.name}`} />
-      <section className="section">
-        <div className="container">
-          <button type="button" className="add-cart" onClick={() => setUser(null)}>Log out</button>
-          <h2 style={{ margin: '24px 0 12px' }}>Orders ({orders.length})</h2>
-          {!orders.length && <p>No orders in this browser session yet.</p>}
-          {orders.map((o) => (
-            <div key={o.id} className="form-card" style={{ marginBottom: 12 }}>
-              <strong>#{o.id}</strong> · {o.method} · ${o.total.toFixed(2)} · {o.form.email}
-            </div>
-          ))}
-        </div>
-      </section>
-    </>
-  )
-}
-
 function Toast() {
   const { toast } = useApp()
   if (!toast) return null
@@ -725,7 +680,8 @@ function AppShell() {
           <Route path="/med-reg" element={<MedReg />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/login" element={<AdminProvider><AdminLogin /></AdminProvider>} />
+          <Route path="/admin/*" element={<AdminProvider><AdminShell /></AdminProvider>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
