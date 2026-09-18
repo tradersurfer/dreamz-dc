@@ -1,6 +1,7 @@
 import { useMemo, useState, createContext, useContext, useCallback } from 'react'
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { PRODUCTS, BRANDS, CATEGORIES } from './data.js'
+import { PRODUCTS, BRANDS, CATEGORIES, BUSINESS } from './data.js'
+import { serializeDataJS, commitChangesToGitHub } from './github.js'
 
 const NAV = [
   { to: '/admin', label: 'Dashboard', end: true },
@@ -99,6 +100,47 @@ function slugify(s) {
 }
 
 export { useApp, slugify, NAV, ORDER_STATUSES, CATS }
+
+/* ---- GitHub commit integration ---- */
+function CommitButton() {
+  const { catalog, brands, categories, announcements } = useApp()
+  const [status, setStatus] = useState('idle')
+  const [prUrl, setPrUrl] = useState('')
+  const [error, setError] = useState('')
+
+  const handleCommit = async () => {
+    const changed = catalog.length + brands.length + categories.length + announcements.length
+    if (!confirm(`Commit ${changed} items to src/data.js and open a PR on GitHub?`)) return
+    setStatus('committing')
+    setError('')
+    setPrUrl('')
+    try {
+      const content = serializeDataJS({ catalog, brands, categories, announcements, business: BUSINESS })
+      const msg = `Admin sync: ${catalog.length} products, ${brands.length} brands, ${categories.length} categories, ${announcements.length} announcements`
+      const result = await commitChangesToGitHub(content, msg)
+      setPrUrl(result.prUrl)
+      setStatus('success')
+    } catch (e) {
+      setError(e.message)
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div style={{ marginTop: 16 }}>
+      <button className="adm-btn" type="button" onClick={handleCommit} disabled={status === 'committing'}>
+        {status === 'committing' ? 'Committing…' : 'Commit to GitHub'}
+      </button>
+      {status === 'committing' && <p className="adm-muted" style={{ marginTop: 8 }}>Creating branch and opening PR…</p>}
+      {status === 'success' && (
+        <p className="adm-muted" style={{ marginTop: 8 }}>
+          ✅ PR created. <a href={prUrl} target="_blank" rel="noreferrer">View PR</a> — Vercel deploys automatically on merge.
+        </p>
+      )}
+      {status === 'error' && <p className="adm-danger" style={{ marginTop: 8 }}>{error}</p>}
+    </div>
+  )
+}
 
 function Stat({ label, value, warn }) {
   return (
@@ -508,10 +550,11 @@ export function AdminShell() {
           ))}
         </nav>
         <div className="adm-side-foot">
-          <p>{user.email || user.name}</p>
-          <button type="button" onClick={() => setUser(null)}>Sign out</button>
-          <Link to="/">View site</Link>
-        </div>
+            <p>{user.email || user.name}</p>
+            <button type="button" onClick={() => setUser(null)}>Sign out</button>
+            <Link to="/">View site</Link>
+            <CommitButton />
+          </div>
       </aside>
       <section className="adm-main">
         <Routes>
